@@ -1,1 +1,42 @@
+/* GREEN BANANAS Professional Style */
+body {
+    background-color: #0d0d0d; /* Deep Black */
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #1a1a1a;
+    border-bottom: 2px solid #D4AF37; /* Golden Border */
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    color: #D4AF37; /* Gold */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.container {
+    padding: 40px;
+    text-align: center;
+}
+
+.btn-contact {
+    background-color: #D4AF37;
+    color: #000;
+    padding: 10px 20px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+footer {
+    margin-top: 50px;
+    font-size: 0.8em;
+    color: #666;
+}
 
