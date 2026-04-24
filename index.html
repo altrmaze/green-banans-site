@@ -1,90 +1,159 @@
-// frontend/src/App.jsx
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Greenbanans General Trading</title>
 
-import { useEffect, useState } from "react";
-import { supabase } from "./supabase";
-
-export default function App() {
-  const [items, setItems] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: ""
-  });
-
-  useEffect(() => {
-    loadMarketplace();
-  }, []);
-
-  async function loadMarketplace() {
-    const { data, error } = await supabase
-      .from("trading_items")
-      .select("*")
-      .eq("is_active", true);
-
-    if (!error) setItems(data);
-  }
-
-  async function sendMessage(e) {
-    e.preventDefault();
-
-    const { error } = await supabase.from("messages").insert([form]);
-
-    if (error) {
-      alert("Message failed");
-    } else {
-      alert("Message sent");
-      setForm({ name: "", email: "", message: "" });
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      color: #222;
     }
-  }
 
-  return (
-    <div>
-      <header style={{ padding: 30, background: "#1f7a3a", color: "white" }}>
-        <h1>Green Bananas General Trading</h1>
-        <p>Import, export, sourcing, and global marketplace</p>
-      </header>
+    header {
+      background: #1f7a3a;
+      color: white;
+      padding: 20px 50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-      <section style={{ padding: 30 }}>
-        <h2>Marketplace</h2>
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #ffd700;
+    }
 
-        {items.map((item) => (
-          <div key={item.id} style={{ border: "1px solid #ddd", padding: 20, marginBottom: 15 }}>
-            <h3>{item.item_name}</h3>
-            <p>{item.description}</p>
-            <strong>${item.price}</strong>
-          </div>
-        ))}
-      </section>
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
 
-      <section style={{ padding: 30, background: "#f5f5f5" }}>
-        <h2>Contact Us</h2>
+    .hero {
+      background: linear-gradient(to right, #1f7a3a, #f5c400);
+      color: white;
+      padding: 100px 50px;
+      text-align: center;
+    }
 
-        <form onSubmit={sendMessage}>
-          <input
-            placeholder="Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-          />
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
 
-          <input
-            placeholder="Email"
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            required
-          />
+    .hero p {
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
 
-          <textarea
-            placeholder="Message"
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-            required
-          />
+    .btn {
+      background: #000;
+      color: #ffd700;
+      padding: 15px 30px;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: bold;
+    }
 
-          <button type="submit">Send</button>
-        </form>
-      </section>
+    section {
+      padding: 60px 50px;
+      text-align: center;
+    }
+
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: #f7f7f7;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h3 {
+      color: #1f7a3a;
+    }
+
+    footer {
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">GREENBANANS</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>Greenbanans General Trading</h1>
+    <p>Trusted global trading, import, export, and business solutions.</p>
+    <a href="#contact" class="btn">Contact Us</a>
+  </div>
+
+  <section id="about">
+    <h2>About Us</h2>
+    <p>
+      Greenbanans is a general trading company focused on reliable international trade,
+      sourcing, import, export, and business partnerships.
+    </p>
+  </section>
+
+  <section id="services">
+    <h2>Our Services</h2>
+
+    <div class="services">
+      <div class="card">
+        <h3>Import & Export</h3>
+        <p>Connecting markets with quality products worldwide.</p>
+      </div>
+
+      <div class="card">
+        <h3>General Trading</h3>
+        <p>Supplying different products across multiple industries.</p>
+      </div>
+
+      <div class="card">
+        <h3>Business Partnerships</h3>
+        <p>Building strong and trusted international relationships.</p>
+      </div>
+
+      <div class="card">
+        <h3>Real Estate Trading</h3>
+        <p>Supporting investment and property-related opportunities.</p>
+      </div>
     </div>
-  );
-}
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <p>Email: info@greenbanans.com</p>
+    <p>Website: www.greenbanans.com</p>
+  </section>
+
+  <footer>
+    <p>© 2026 Greenbanans General Trading. All Rights Reserved.</p>
+  </footer>
+
+</body>
+</html>
