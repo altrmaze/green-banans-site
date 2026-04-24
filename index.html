@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Green Bananas | Your Choice</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
@@ -14,128 +15,124 @@
         .font-ar { font-family: 'Cairo', sans-serif !important; }
         .bg-brand { background-color: var(--brand-green); }
         .text-brand { color: var(--brand-green); }
-        
-        /* Smooth Page Transition */
         #main-site { display: none; }
         .fade-in { animation: fadeIn 0.8s ease-in forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Floating Logo Effect */
-        .logo-promising {
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
-            animation: float 4s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
+        .logo-promising { filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); animation: float 4s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
 <body class="bg-slate-50">
 
     <section id="entry-page" class="h-screen w-full flex flex-col items-center justify-center bg-white text-center px-6">
         <div class="max-w-xl">
-            <img src="1000025815.png" alt="Green Bananas Logo" class="h-32 md:h-48 mx-auto mb-8 logo-promising">
-            
-            <h1 class="text-3xl md:text-5xl font-extrabold text-brand mb-4 uppercase tracking-wider" 
-                data-en="Green Bananas is your choice" 
-                data-ar="جرين بناناس هي خيارك">
-                Green Bananas is your choice
-            </h1>
-            
-            <p class="text-gray-500 text-lg mb-10 italic" 
-               data-en="Reliability. Quality. Fairness." 
-               data-ar="الموثوقية. الجودة. النزاهة.">
-                Reliability. Quality. Fairness.
-            </p>
-
-            <button onclick="startJourney()" class="bg-brand text-white px-10 py-4 rounded-full font-bold text-xl shadow-2xl hover:scale-110 hover:bg-green-800 transition-all duration-300">
-                <span data-en="Click here to start your journey" data-ar="اضغط هنا لتبدأ رحلتك">
-                    Click here to start your journey
-                </span>
+            <img src="1000025815.png" alt="Logo" class="h-32 md:h-48 mx-auto mb-8 logo-promising">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-brand mb-4 uppercase tracking-wider" data-en="Green Bananas is your choice" data-ar="جرين بناناس هي خيارك">Green Bananas is your choice</h1>
+            <button onclick="startJourney()" class="bg-brand text-white px-10 py-4 rounded-full font-bold text-xl shadow-2xl hover:scale-110 transition-all duration-300">
+                <span data-en="Click here to start your journey" data-ar="اضغط هنا لتبدأ رحلتك">Click here to start your journey</span>
                 <i class="fas fa-arrow-right ml-3 mr-3"></i>
             </button>
         </div>
     </section>
 
     <main id="main-site" class="fade-in">
-        
-        <nav class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50">
-            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                <img src="1000025815.png" alt="Logo" class="h-12 pointer-cursor" onclick="location.reload()">
-                
-                <div class="flex items-center space-x-6">
-                    <div class="hidden md:flex space-x-8 font-bold text-xs uppercase tracking-tighter">
-                        <a href="#services" class="hover:text-green-700">Services</a>
-                        <a href="#contact" class="hover:text-green-700">Contact</a>
-                    </div>
-                    <button onclick="toggleLang()" class="border-2 border-brand text-brand px-4 py-1 rounded-lg font-bold hover:bg-brand hover:text-white transition">
-                        <span id="lang-btn">العربية</span>
-                    </button>
-                </div>
-            </div>
+        <nav class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
+            <img src="1000025815.png" alt="Logo" class="h-12 cursor-pointer" onclick="location.reload()">
+            <button onclick="toggleLang()" class="border-2 border-brand text-brand px-4 py-1 rounded-lg font-bold hover:bg-brand hover:text-white transition">
+                <span id="lang-btn">العربية</span>
+            </button>
         </nav>
 
-        <section class="relative h-[70vh] flex items-center justify-center overflow-hidden">
-            <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none">
-                <source src="1000025818.mp4" type="video/mp4">
-            </video>
-            <div class="relative z-10 w-full h-full bg-black/50 flex flex-col justify-center items-center text-white text-center px-4">
-                <h2 class="text-4xl md:text-6xl font-bold mb-4 uppercase" data-en="Promising Trading Solutions" data-ar="حلول تجارية واعدة">Promising Trading Solutions</h2>
-                <p class="text-xl max-w-2xl opacity-90" data-en="Green Bananas is your choice for global excellence." data-ar="جرين بناناس هي خيارك للتميز العالمي.">Green Bananas is your choice for global excellence.</p>
-            </div>
-        </section>
-
-        <section id="services" class="py-20 container mx-auto px-6">
-            <div class="grid md:grid-cols-3 gap-10">
-                <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition border-b-4 border-brand">
-                    <i class="fas fa-globe text-brand text-4xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2" data-en="Global Export" data-ar="تصدير عالمي">Global Export</h3>
-                    <p class="text-gray-600" data-en="We deliver quality across all borders." data-ar="نحن نقدم الجودة عبر جميع الحدود.">We deliver quality across all borders.</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition border-b-4 border-brand">
-                    <i class="fas fa-shield-check text-brand text-4xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2" data-en="Trusted Quality" data-ar="جودة موثوقة">Trusted Quality</h3>
-                    <p class="text-gray-600" data-en="Every product is vetted for excellence." data-ar="يتم فحص كل منتج للتأكد من تميزه.">Every product is vetted for excellence.</p>
-                </div>
-                <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition border-b-4 border-brand">
-                    <i class="fas fa-hand-holding-heart text-brand text-4xl mb-4"></i>
-                    <h3 class="text-xl font-bold mb-2" data-en="Fair Trading" data-ar="تجارة عادلة">Fair Trading</h3>
-                    <p class="text-gray-600" data-en="Your success is our priority." data-ar="نجاحكم هو أولويتنا.">Your success is our priority.</p>
-                </div>
+        <section id="marketplace" class="py-20 container mx-auto px-6">
+            <h2 class="text-3xl font-black mb-12 text-center text-brand uppercase" data-en="Global Marketplace" data-ar="السوق العالمي">Global Marketplace</h2>
+            <div id="product-grid" class="grid md:grid-cols-3 gap-10">
+                <div class="col-span-full text-center py-10 text-gray-400 italic">Connecting to secure database...</div>
             </div>
         </section>
 
         <section id="contact" class="py-20 bg-brand text-white text-center">
             <h2 class="text-3xl font-bold mb-8" data-en="Contact Us" data-ar="تواصل معنا">Contact Us</h2>
-            <form class="max-w-lg mx-auto px-6 space-y-4">
-                <input type="text" placeholder="Name" class="w-full p-4 rounded-lg text-black outline-none">
-                <textarea placeholder="Message" class="w-full p-4 rounded-lg text-black outline-none"></textarea>
-                <button class="bg-white text-brand px-12 py-4 rounded-full font-bold uppercase hover:bg-gray-100 transition shadow-lg" data-en="Send Now" data-ar="أرسل الآن">Send Now</button>
+            <form id="contact-form" class="max-w-lg mx-auto px-6 space-y-4">
+                <input type="text" id="contact-name" placeholder="Name" class="w-full p-4 rounded-lg text-black outline-none" required>
+                <textarea id="contact-msg" placeholder="Message" class="w-full p-4 rounded-lg text-black outline-none" required></textarea>
+                <button type="submit" class="bg-white text-brand px-12 py-4 rounded-full font-bold uppercase shadow-lg">Send Now</button>
             </form>
         </section>
 
         <footer class="py-10 text-center text-gray-400 text-sm">
-            <img src="1000025815.png" alt="Logo" class="h-10 mx-auto mb-4 opacity-50 grayscale">
             <p>© 2026 Green Bananas. All rights reserved.</p>
         </footer>
     </main>
 
     <script>
-        // PAGE TRANSITION
+        // 1. DATABASE CONFIGURATION (SUPABASE)
+        // Replace these with your actual Supabase Project details
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_KEY = 'YOUR_ANON_PUBLIC_KEY';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 2. FETCH DATA FROM SQL
+        async function loadMarketplace() {
+            const grid = document.getElementById('product-grid');
+            
+            // Assuming your table name is 'trading_items'
+            const { data, error } = await supabaseClient.from('trading_items').select('*');
+
+            if (error) {
+                grid.innerHTML = `<p class="col-span-full text-red-500 text-center">Database Error: ${error.message}</p>`;
+                return;
+            }
+
+            if (data.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center">No active listings found.</p>`;
+                return;
+            }
+
+            grid.innerHTML = ''; // Clear loading text
+            data.forEach(item => {
+                const card = `
+                    <div class="bg-white p-6 rounded-2xl shadow-xl border-t-4 border-brand hover:-translate-y-2 transition-transform">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${item.category || 'Asset'}</span>
+                        <h3 class="text-xl font-bold text-gray-800 mt-2">${item.item_name}</h3>
+                        <p class="text-gray-500 text-sm mt-3 mb-6">${item.description || 'Verified global trading asset.'}</p>
+                        <div class="flex justify-between items-center border-t pt-4">
+                            <span class="font-black text-brand">$${item.price.toLocaleString()}</span>
+                            <button class="text-xs font-bold text-gray-400 hover:text-brand uppercase tracking-tighter">View Details</button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // 3. PAGE TRANSITIONS & INITIALIZATION
         function startJourney() {
             document.getElementById('entry-page').style.display = 'none';
             document.getElementById('main-site').style.display = 'block';
             window.scrollTo(0, 0);
+            loadMarketplace(); // Trigger database load when site opens
         }
 
-        // LANGUAGE TOGGLE
+        // 4. CONTACT FORM TO DATABASE
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const message = document.getElementById('contact-msg').value;
+
+            const { error } = await supabaseClient.from('messages').insert([{ name, message }]);
+            
+            if (error) alert("Error sending message.");
+            else alert("Message sent to Green Bananas team!");
+            
+            e.target.reset();
+        });
+
+        // 5. LANGUAGE TOGGLE (Same as yours)
         let currentLang = 'en';
         function toggleLang() {
             const html = document.getElementById('main-html');
             const elements = document.querySelectorAll('[data-en]');
             const btn = document.getElementById('lang-btn');
-
             if (currentLang === 'en') {
                 html.setAttribute('dir', 'rtl');
                 document.body.classList.add('font-ar');
