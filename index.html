@@ -1,39 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GREEN BANANAS | Global General Trading</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>Green Bananas | Exclusive Trading Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        :root {
-            --brand-green: #2ecc71; /* Bright, confident green */
-            --dark-bg: #0a0f0b;
-            --glass: rgba(255, 255, 255, 0.05);
+        :root { --brand-green: #2D5A27; }
+        body { font-family: sans-serif; background-color: #f3f6f3; }
+        .bg-brand { background-color: var(--brand-green); }
+        .text-brand { color: var(--brand-green); }
+        .blur-info { filter: blur(6px); user-select: none; pointer-events: none; }
+        .deal-box { border: 2px solid #e2e8f0; border-radius: 20px; background: white; overflow: hidden; transition: 0.3s; }
+        .deal-box:hover { border-color: var(--brand-green); }
+    </style>
+</head>
+<body class="text-slate-900">
+
+    <nav class="bg-white border-b sticky top-0 z-50 py-4 shadow-sm">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <span class="font-black text-2xl text-brand tracking-tighter">GREEN BANANAS <span class="text-gray-300 text-xs">OFFICIAL BROKER</span></span>
+            <div class="flex items-center space-x-4">
+                <span class="text-xs font-bold text-gray-400 uppercase">Broker Commission: 2%</span>
+                <a href="#seller-form" class="bg-brand text-white px-5 py-2 rounded-lg text-sm font-bold">List Asset</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-12">
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl font-black text-slate-800 mb-2">Qualified Global Assets</h1>
+            <p class="text-gray-500 italic">Information Access Fee: $20.00 USD per item.</p>
+        </div>
+
+        <div id="trading-floor" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+    </main>
+
+    <div id="policy-modal" class="fixed inset-0 bg-black/80 hidden z-[100] flex items-center justify-center p-6">
+        <div class="bg-white max-w-lg w-full p-8 rounded-3xl shadow-2xl">
+            <h2 class="text-2xl font-bold text-brand mb-4">Brokerage Agreement & Privacy Policy</h2>
+            <div class="h-48 overflow-y-scroll border-y py-4 text-sm text-gray-600 mb-6">
+                <p class="mb-2">1. <strong>Direct Communication:</strong> By paying the access fee, you agree NOT to circumvent Green Bananas. All initial communications must occur via this platform.</p>
+                <p class="mb-2">2. <strong>Brokerage Fee:</strong> A 2% commission is due to Green Bananas from the final transaction price upon successful deal closure.</p>
+                <p class="mb-2">3. <strong>Confidentiality:</strong> Seller qualifications and country data revealed are for your eyes only.</p>
+            </div>
+            <button onclick="payToUnlock()" class="w-full bg-brand text-white py-4 rounded-xl font-bold shadow-lg hover:bg-green-800">
+                Sign Policy & Pay $20.00 to Reveal
+            </button>
+            <button onclick="closeModal()" class="w-full mt-2 text-gray-400 text-sm">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const _URL = 'https://xlmgtjikvmagdtoksdfo.supabase.co';
+        const _KEY = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2';
+        const supabase = supabase.createClient(_URL, _KEY);
+
+        let activeItemId = null;
+
+        async function loadTradingFloor() {
+            const floor = document.getElementById('trading-floor');
+            const { data, error } = await supabase.from('trading_items').select('*');
+            if (error) return;
+
+            floor.innerHTML = "";
+            data.forEach(item => {
+                const commission = item.price * 0.02;
+                const card = document.createElement('div');
+                card.className = "deal-box p-6 flex flex-col justify-between shadow-sm";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between mb-4">
+                            <span class="bg-slate-100 text-[10px] px-2 py-1 rounded font-bold text-gray-500 uppercase">${item.category}</span>
+                            <span class="text-brand text-sm font-bold"><i class="fas fa-globe"></i> ${item.status}</span>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4">${item.item_name}</h3>
+                        
+                        <div class="bg-slate-50 p-4 rounded-xl mb-6 relative">
+                            <div class="blur-info">
+                                <p class="text-xs font-bold text-gray-400 mb-1">QUALIFICATIONS:</p>
+                                <p class="text-sm">Verified ISO-9001 Sourcing Logistics Ready</p>
+                                <p class="text-xs font-bold text-gray-400 mt-2">SELLER IDENTITY:</p>
+                                <p class="text-sm">GLOBAL_TRADING_CORP_REDACTED</p>
+                            </div>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button onclick="openPolicy('${item.id}')" class="bg-white border border-brand text-brand text-xs font-bold px-4 py-2 rounded-full shadow-sm">
+                                    <i class="fas fa-lock mr-2"></i> Unlock Info ($20)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-end mb-4">
+                            <span class="text-gray-400 text-xs font-bold uppercase">Price: <br><span class="text-xl text-slate-800">$${Number(item.price).toLocaleString()}</span></span>
+                            <span class="text-brand text-xs font-bold text-right uppercase">Your 2% Comm: <br><span class="text-lg">$${commission.toLocaleString()}</span></span>
+                        </div>
+                        <button onclick="initiateHandshake('${item.item_name}')" class="w-full bg-slate-800 text-white py-3 rounded-xl font-bold text-sm hover:bg-black">
+                            Initiate Double Handshake
+                        </button>
+                    </div>
+                `;
+                floor.appendChild(card);
+            });
         }
 
-        body {
-            background-color: var(--dark-bg);
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 40%);
-            color: #ffffff;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+        // ACCESS FEE LOGIC
+        function openPolicy(id) {
+            activeItemId = id;
+            document.getElementById('policy-modal').classList.remove('hidden');
         }
 
-        .navbar {
-            padding: 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--brand-green);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        function closeModal() { document.getElementById('policy-modal').classList.add('hidden'); }
+
+        function payToUnlock() {
+            alert("Redirecting to Bank Payment ($20.00)...");
+            // After payment, you would set a cookie or database entry to unblur for this user.
+            alert("SUCCESS: Policy Signed. Contact info for " + activeItemId + " revealed in your portal.");
+            closeModal();
         }
+
+        // DOUBLE HANDSHAKE LOGIC
+        function initiateHandshake(name) {
+            const step1 = confirm("SELLER: Do you accept the buyer's terms and agree to sell " + name + "?");
+            if (step1) {
+                const step2 = confirm("BUYER: Do you accept the seller's terms and agree to buy " + name + "?");
+                if (step2) {
+                    alert("TRANSACTION FINALIZED: Green Bananas has secured the 2% brokerage fee. Exchange of documents revealed.");
+                }
+            }
+        }
+
+        window.onload = loadTradingFloor;
+    </script>
+</body>
+</html>
 
         .logo {
             font-size: 24px;
