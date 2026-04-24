@@ -13,7 +13,38 @@
     <p>General Trading Company - Sourcing, Supply, and Distribution</p>
     <p>WWW.GREENBANANS.COM</p>
     <br>
-    <img src="https://via.placeholder.com/150" alt="Green Bananas Logo">
+   
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  // 1. Connect to the Database
+  const supabaseUrl = 'sb_secret_KTyu0ViJbami_W3V9LNAAQ_PA9mACjx'
+  const supabaseKey = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2'
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+
+  // 2. Fetch the data from your "trading_items" table
+  async function loadInventory() {
+    const { data, error } = await supabase
+      .from('trading_items')
+      .select('*')
+
+    if (error) {
+      console.error('Error loading data:', error)
+      return
+    }
+
+    // 3. Show the data on the screen
+    const display = document.getElementById('inventory-list')
+    data.forEach(item => {
+      const itemDiv = document.createElement('div')
+      itemDiv.innerHTML = `<h3>${item.item_name}</h3><p>Category: ${item.category} | Price: $${item.price}</p>`
+      display.appendChild(itemDiv)
+    })
+  }
+
+  loadInventory()
+</script>
+<img src="https://via.placeholder.com/150" alt="Green Bananas Logo">
 </body>
 </html>
 
