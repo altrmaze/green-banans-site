@@ -1,48 +1,56 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // 2. CONNECTION (Double-check these two strings!)
-  const _URL = 'https://YOUR_PROJECT_URL.supabase.co'; 
-  const _KEY = 'YOUR_LONG_ANON_PUBLIC_KEY';
+  // 1. Paste your exact URL and Key here
+  const _URL = 'https://YOUR_PROJECT_ID.supabase.co'; 
+  const _KEY = 'YOUR_ANON_KEY';
 
-  const supabase = supabase.createClient(_URL, _KEY);
+  // 2. Initialize connection
+  const supabaseClient = supabase.createClient(_URL, _KEY);
 
-  async function displayTradingItems() {
+  async function getItems() {
     const listArea = document.getElementById('inventory-list');
     
+    // Test if the listArea exists first
+    if (!listArea) {
+       console.error("Missing inventory-list div in HTML");
+       return;
+    }
+
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('trading_items')
         .select('*');
 
       if (error) {
-        // This will print the EXACT error from Supabase on your screen
-        listArea.innerHTML = `<p style="color:red;">Database Error: ${error.message}</p>`;
+        listArea.innerHTML = `<p style="color:red; background:white; padding:10px;">Error: ${error.message}</p>`;
         return;
       }
 
-      if (data.length === 0) {
-        listArea.innerHTML = "<p>Table is connected, but no items found. Add a row in Supabase!</p>";
+      if (!data || data.length === 0) {
+        listArea.innerHTML = "<p style='color:white;'>Connected! But no items found in your Supabase table.</p>";
         return;
       }
 
-      listArea.innerHTML = ""; 
+      // Clear loading text and show cards
+      listArea.innerHTML = "";
       data.forEach(item => {
         const card = document.createElement('div');
-        card.style = "border: 1px solid #D4AF37; margin: 10px; padding: 15px; border-radius: 8px; background: #1a1a1a;";
+        card.style = "border: 2px solid #D4AF37; margin-bottom: 15px; padding: 15px; background: #1a1a1a; color: white; border-radius: 10px;";
         card.innerHTML = `
-          <h3 style="color:#D4AF37; margin:0;">${item.item_name}</h3>
-          <p style="color:#ccc; font-size:0.9em;">Category: ${item.category}</p>
-          <p style="font-size: 1.2em; color:#fff;">Price: $${item.price}</p>
-          <span style="color:#D4AF37; font-weight:bold;">${item.status}</span>
+          <h2 style="color:#D4AF37; margin:0;">${item.item_name || 'No Name'}</h2>
+          <p>Category: ${item.category || 'General'}</p>
+          <p style="font-size: 1.3em; font-weight: bold;">$${item.price || '0'}</p>
+          <p style="color:#D4AF37;">Status: ${item.status || 'Available'}</p>
         `;
         listArea.appendChild(card);
       });
 
     } catch (err) {
-      listArea.innerHTML = `<p style="color:red;">System Error: ${err.message}</p>`;
+      listArea.innerHTML = `<p style="color:red; background:white;">Critical Error: ${err.message}</p>`;
     }
   }
 
-  displayTradingItems();
+  // Start the engine
+  window.onload = getItems;
 </script>
