@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GREEN BANANAS | Enterprise Brokerage v4.0</title>
+    <title>GREEN BANANAS | Enterprise Global Marketplace</title>
     
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -13,10 +13,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        :root { --primary: #1b4332; }
-        body { background: #f9fafb; font-family: 'Inter', sans-serif; }
-        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .admin-glow { border: 2px solid #2ecc71; box-shadow: 0 0 15px rgba(46, 204, 113, 0.2); }
+        :root { --gb-green: #1b4332; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: #fdfdfd; }
+        .market-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .market-card:hover { transform: translateY(-8px); border-color: #1b4332; }
+        .nav-blur { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
     </style>
 </head>
 <body>
@@ -24,116 +25,86 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
-        const _URL = 'https://xlmgtjikvmagdtoksdfo.supabase.co';
-        const _KEY = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2';
-        const supabase = supabase.createClient(_URL, _KEY);
+        const supabase = supabase.createClient('https://xlmgtjikvmagdtoksdfo.supabase.co', 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2');
 
         function App() {
             const [items, setItems] = useState([]);
-            const [isAdmin, setIsAdmin] = useState(false);
-            const [logo, setLogo] = useState('1000025815.png');
-            const [aiOpen, setAiOpen] = useState(false);
+            const [lang, setLang] = useState('en');
 
-            useEffect(() => { fetchItems(); }, []);
+            const content = {
+                en: { title: "Global Assets", sub: "Verified Corporate Marketplace", btn: "View Details", sell: "List Item" },
+                ar: { title: "الأصول العالمية", sub: "سوق الشركات المعتمد", btn: "عرض التفاصيل", sell: "إدراج سلعة" }
+            };
 
-            const fetchItems = async () => {
+            useEffect(() => { 
+                loadMarket();
+            }, []);
+
+            const loadMarket = async () => {
                 const { data } = await supabase.from('trading_items').select('*');
                 setItems(data || []);
             };
 
-            // --- ADMIN FUNCTIONS ---
-            const handleLogin = () => {
-                const u = prompt("Admin User:");
-                const p = prompt("Admin Pass:");
-                if(u === "admin" && p === "greenbananas2026") {
-                    setIsAdmin(true);
-                    alert("Owner Access Granted. Editor Mode Active.");
-                }
-            };
-
-            const deleteItem = async (id) => {
-                if(confirm("Confirm deletion from SQL Server?")) {
-                    await supabase.from('trading_items').delete().eq('id', id);
-                    fetchItems();
-                }
-            };
-
-            const updateLogo = () => {
-                const newLogo = prompt("Enter new Logo Image URL:");
-                if(newLogo) setLogo(newLogo);
-            };
-
             return (
-                <div className="min-h-screen">
-                    {/* Header */}
-                    <nav className="sticky top-0 z-50 bg-white border-b px-6 py-4 flex justify-between items-center glass-panel">
-                        <div className="flex items-center space-x-3">
-                            <img src={logo} className="h-10 cursor-pointer" onClick={isAdmin ? updateLogo : null} title={isAdmin ? "Click to change logo" : ""} />
-                            <span className="font-black text-xl text-slate-800">GREEN BANANAS</span>
+                <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={lang === 'ar' ? 'font-serif' : ''}>
+                    {/* Enterprise Nav */}
+                    <nav className="nav-blur sticky top-0 z-50 border-b px-8 py-5 flex justify-between items-center">
+                        <div className="flex items-center space-x-4">
+                            <div className="bg-[#1b4332] text-white px-3 py-1 rounded font-black">GB</div>
+                            <h1 className="text-xl font-black tracking-tighter text-slate-800">GREEN BANANAS</h1>
                         </div>
-                        <button onClick={isAdmin ? () => setIsAdmin(false) : handleLogin} className="text-[10px] font-bold text-slate-400">
-                            {isAdmin ? "EXIT ADMIN" : <><i className="fas fa-lock mr-1"></i> STAFF LOGIN</>}
-                        </button>
+                        <div className="flex items-center space-x-6">
+                            <select onChange={(e) => setLang(e.target.value)} className="text-xs font-bold border-none bg-transparent uppercase">
+                                <option value="en">English</option>
+                                <option value="ar">العربية</option>
+                            </select>
+                            <button className="bg-[#1b4332] text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg">
+                                {content[lang].sell}
+                            </button>
+                        </div>
                     </nav>
 
-                    {/* Admin Dashboard Section */}
-                    {isAdmin && (
-                        <section className="bg-[#1b4332] p-8 text-white admin-glow">
-                            <div className="container mx-auto">
-                                <h2 className="text-xl font-bold mb-4">Owner Control Panel</h2>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <button onClick={() => window.scrollTo(0, document.body.scrollHeight)} className="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition text-sm">
-                                        <i class="fas fa-plus mr-2"></i> Add New Product Photo/Data
-                                    </button>
-                                    <button onClick={updateLogo} className="bg-white/10 p-4 rounded-xl hover:bg-white/20 transition text-sm">
-                                        <i class="fas fa-image mr-2"></i> Update Global Brand Logo
-                                    </button>
-                                    <div className="text-xs text-green-300">Market Status: Live | SQL Connected</div>
-                                </div>
-                            </div>
-                        </section>
-                    )}
+                    {/* Professional Header */}
+                    <header className="py-20 text-center px-6 bg-slate-50">
+                        <h2 className="text-5xl font-black text-slate-900 mb-4">{content[lang].title}</h2>
+                        <p className="text-slate-400 font-medium uppercase tracking-widest text-xs">{content[lang].sub}</p>
+                    </header>
 
-                    {/* Main Trading Floor */}
-                    <main className="container mx-auto px-6 py-12">
-                        <div className="grid md:grid-cols-3 gap-8">
+                    {/* Product Floor */}
+                    <main className="container mx-auto px-6 py-16">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             {items.map(item => (
-                                <div key={item.id} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex flex-col justify-between">
-                                    <div>
-                                        <div className="flex justify-between items-center mb-4">
-                                            <span className="text-[10px] font-bold text-slate-300 uppercase">{item.category}</span>
-                                            {isAdmin && <button onClick={() => deleteItem(item.id)} className="text-red-500 text-xs font-bold">DELETE</button>}
-                                        </div>
-                                        {item.image_url && <img src={item.image_url} className="w-full h-40 object-cover rounded-2xl mb-4" />}
-                                        <h3 className="text-xl font-bold text-slate-800 mb-4">{item.item_name}</h3>
-                                        <div className="bg-slate-50 p-4 rounded-xl text-[10px] text-slate-400 italic mb-6">
-                                            Seller Qualifications Protected. <br/>Request $20 reveal for full data.
-                                        </div>
+                                <div key={item.id} className="market-card bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <span className="text-[10px] font-black text-[#1b4332] uppercase bg-green-50 px-2 py-1 rounded-md">{item.category}</span>
+                                        <i className="fas fa-shield-check text-blue-500 text-xs"></i>
                                     </div>
-                                    <div className="flex justify-between items-center border-t pt-4">
-                                        <div className="text-xl font-black text-[#1b4332]">${Number(item.price).toLocaleString()}</div>
-                                        <button onClick={() => setAiOpen(true)} className="bg-[#1b4332] text-white px-4 py-2 rounded-lg text-xs font-bold">REQUEST INFO</button>
+                                    
+                                    {/* Placeholder for Product Image */}
+                                    <div className="h-48 bg-slate-50 rounded-2xl mb-6 flex items-center justify-center">
+                                        <i className="fas fa-box-open text-slate-200 text-4xl"></i>
+                                    </div>
+
+                                    <h3 className="text-xl font-bold text-slate-800 mb-2">{item.item_name}</h3>
+                                    <p className="text-xs text-slate-400 mb-8 line-clamp-2">High-quality industrial grade asset verified for global shipment.</p>
+
+                                    <div className="mt-auto pt-6 border-t flex justify-between items-center">
+                                        <span className="text-xs font-bold text-slate-500">Contact for Quote</span>
+                                        <button className="text-[#1b4332] font-black text-xs uppercase tracking-wider hover:underline">
+                                            {content[lang].btn}
+                                        </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </main>
 
-                    {/* 24/7 AI ENGINE */}
-                    <div className={`fixed bottom-6 right-6 w-80 bg-white rounded-3xl shadow-2xl transition-transform duration-500 z-[100] ${aiOpen ? 'translate-y-0' : 'translate-y-[150%]'}`}>
-                        <div className="bg-[#1b4332] p-4 text-white rounded-t-3xl flex justify-between items-center">
-                            <span className="text-xs font-bold tracking-widest">SMART ASSISTANT 24/7</span>
-                            <button onClick={() => setAiOpen(false)}><i class="fas fa-times"></i></button>
-                        </div>
-                        <div className="p-6 text-sm text-gray-600">
-                            Greetings. To maintain broker integrity, specific item qualifications are hidden. We require a $20.00 access fee to reveal the seller's country and certified documentation.
-                            <button className="w-full bg-[#1b4332] text-white py-3 rounded-xl mt-4 font-bold">Pay $20 to Unlock</button>
-                        </div>
+                    {/* AI Support - Professional Placement */}
+                    <div className="fixed bottom-8 right-8">
+                        <button className="bg-[#1b4332] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center">
+                            <i className="fas fa-comment-alt"></i>
+                        </button>
                     </div>
-
-                    <button onClick={() => setAiOpen(true)} className="fixed bottom-6 right-6 bg-[#1b4332] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-xl z-[90]">
-                        <i class="fas fa-robot"></i>
-                    </button>
                 </div>
             );
         }
