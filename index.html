@@ -1,59 +1,39 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>GREEN BANANAS | General Trading</title>
-    <style>
-        body { background-color: #000; color: #D4AF37; font-family: sans-serif; text-align: center; padding-top: 50px; }
-        h1 { color: #D4AF37; } /* Golden Black Theme */
-        p { color: #fff; }
-    </style>
-</head>
-    <div id="inventory-list">
-    <h2>Our Current Inventory</h2>
-    </div>
-
-<body>
-    <h1>GREEN BANANAS</h1>
-    <p>General Trading Company - Sourcing, Supply, and Distribution</p>
-    <p>WWW.GREENBANANS.COM</p>
-    <br>
-   
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // 1. Connect to the Database
-  const supabaseUrl = 'sb_secret_KTyu0ViJbami_W3V9LNAAQ_PA9mACjx'
-  const supabaseKey = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2'
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+  // 2. Your Secret Connection Keys (Paste yours between the 'quotes')
+  const _URL = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2'; 
+  const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhsbWd0amlrdm1hZ2R0b2tzZGZvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Njk2OTU1NiwiZXhwIjoyMDkyNTQ1NTU2fQ.yszjvzW4npR4Sw-hsivjzCEpCG4flZt2e_gLUbU8S6c';
 
-  // 2. Fetch the data from your "trading_items" table
-  async function loadInventory() {
+  const supabase = supabase.createClient(_URL, _KEY);
+
+  // 3. The Function to get your cars/products
+  async function displayTradingItems() {
     const { data, error } = await supabase
       .from('trading_items')
-      .select('*')
+      .select('*');
+
+    const listArea = document.getElementById('inventory-list');
 
     if (error) {
-      console.error('Error loading data:', error)
-      return
+      listArea.innerHTML = "<p style='color:red;'>Connection Error. Please check keys.</p>";
+      return;
     }
 
-    // 3. Show the data on the screen
-    const display = document.getElementById('inventory-list')
+    // 4. Clear the "Loading" text and show items
+    listArea.innerHTML = ""; 
     data.forEach(item => {
-      const itemDiv = document.createElement('div')
-      itemDiv.innerHTML = `<h3>${item.item_name}</h3><p>Category: ${item.category} | Price: $${item.price}</p>`
-      display.appendChild(itemDiv)
-    })
+      const card = document.createElement('div');
+      card.style = "border: 1px solid #D4AF37; margin: 10px; padding: 15px; border-radius: 8px;";
+      card.innerHTML = `
+        <h3 style="color:#D4AF37;">${item.item_name}</h3>
+        <p>Category: ${item.category} | Status: <strong>${item.status}</strong></p>
+        <p style="font-size: 1.2em;">Price: $${item.price}</p>
+      `;
+      listArea.appendChild(card);
+    });
   }
 
-  loadInventory()
+  // Run the function when the page opens
+  displayTradingItems();
 </script>
-<img src="https://via.placeholder.com/150" alt="Green Bananas Logo">
-</body>
-</html>
-
-<head>
-    <title>GREEN BANANAS | General Trading</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-
