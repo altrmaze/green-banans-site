@@ -3,37 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GREEN BANANAS | General Trading</title>
+    <title>GREEN BANANAS | Global General Trading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #000; color: #fff; font-family: sans-serif; text-align: center; margin: 0; padding: 20px; }
-        h1 { color: #D4AF37; text-transform: uppercase; margin-top: 50px; }
-        .subtitle { color: #D4AF37; font-size: 0.9em; margin-bottom: 30px; }
-        #inventory-list { max-width: 500px; margin: 0 auto; text-align: left; }
-        .card { border: 1px solid #D4AF37; padding: 15px; margin-bottom: 15px; border-radius: 8px; background: #111; }
-        .card h3 { color: #D4AF37; margin: 0 0 10px 0; }
-        .price { font-size: 1.2em; font-weight: bold; }
+        :root {
+            --brand-green: #2ecc71; /* Bright, confident green */
+            --dark-bg: #0a0f0b;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(46, 204, 113, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 40%);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .navbar {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--brand-green);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--brand-green);
+            text-decoration: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .hero {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #a0a0a0;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        #inventory-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .item-card {
+            background: var(--glass);
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--brand-green);
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .item-card h2 {
+            margin: 0 0 10px 0;
+            color: var(--brand-green);
+            font-size: 1.4rem;
+        }
+
+        .category-tag {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--brand-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 15px 0;
+            color: #fff;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #2ecc71;
+        }
+
+        .status::before {
+            content: "●";
+            margin-right: 8px;
+        }
+
+        .contact-bar {
+            text-align: center;
+            margin-top: 50px;
+            padding: 40px;
+            border-top: 1px solid var(--glass);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
 
-    <h1>GREEN BANANAS</h1>
-    <p class="subtitle">General Trading Company - Sourcing, Supply, and Distribution</p>
-    <p>WWW.GREENBANANS.COM</p>
+    <nav class="navbar">
+        <div class="logo">GREEN BANANAS</div>
+    </nav>
 
-    <div id="inventory-list">
-        <p style="text-align:center;">Connecting to Global Database...</p>
+    <div class="hero">
+        <h1>Global Trading Excellence</h1>
+        <p>Sourcing, Supply, and Distribution of Premium Goods and Automobiles</p>
+        <div style="color: var(--brand-green); font-weight: bold;">WWW.GREENBANANS.COM</div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div class="container">
+        <div id="inventory-list">
+            <p style="text-align: center; width: 100%;">Connecting to secure server...</p>
+        </div>
+    </div>
 
+    <div class="contact-bar">
+        <p>Ready to do business?</p>
+        <a href="mailto:info@greenbanans.com" style="color: var(--brand-green); text-decoration: none; border: 1px solid var(--brand-green); padding: 10px 25px; border-radius: 25px;">Contact Us Today</a>
+    </div>
+
+    <footer>
+        &copy; 2026 GREEN BANANAS | General Trading Company
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 2. Safe Connection Settings
         const _URL = 'https://xlmgtjikvmagdtoksdfo.supabase.co';
         const _KEY = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2';
-
         const supabaseClient = supabase.createClient(_URL, _KEY);
 
-        async function loadItems() {
+        async function getItems() {
+            const listArea = document.getElementById('inventory-list');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('trading_items')
+                    .select('*');
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    listArea.innerHTML = "<p style='text-align:center; width:100%;'>Our catalog is currently being updated. Please check back soon.</p>";
+                    return;
+                }
+
+                listArea.innerHTML = "";
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.innerHTML = `
+                        <span class="category-tag">${item.category || 'Trading Item'}</span>
+                        <h2>${item.item_name}</h2>
+                        <div class="price">$${Number(item.price).toLocaleString()}</div>
+                        <div class="status">${item.status || 'Available'}</div>
+                    `;
+                    listArea.appendChild(card);
+                });
+
+            } catch (err) {
+                listArea.innerHTML = `<p style="color:red; text-align:center; width:100%;">System Update in Progress. Please refresh.</p>`;
+                console.error(err);
+            }
+        }
+
+        window.onload = getItems;
+    </script>
+</body>
+</html>
             const listArea = document.getElementById('inventory-list');
             
             try {
