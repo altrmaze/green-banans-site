@@ -1,90 +1,167 @@
-// frontend/src/App.jsx
+<!DOCTYPE html>
+<html lang="en" id="main-html">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Green Bananas General Trading</title>
 
-import { useEffect, useState } from "react";
-import { supabase } from "./supabase";
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-export default function App() {
-  const [items, setItems] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: ""
-  });
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
 
-  useEffect(() => {
-    loadMarketplace();
-  }, []);
-
-  async function loadMarketplace() {
-    const { data, error } = await supabase
-      .from("trading_items")
-      .select("*")
-      .eq("is_active", true);
-
-    if (!error) setItems(data);
-  }
-
-  async function sendMessage(e) {
-    e.preventDefault();
-
-    const { error } = await supabase.from("messages").insert([form]);
-
-    if (error) {
-      alert("Message failed");
-    } else {
-      alert("Message sent");
-      setForm({ name: "", email: "", message: "" });
+  <style>
+    :root {
+      --brand-green: #1f7a3a;
+      --brand-gold: #ffd700;
     }
-  }
 
-  return (
-    <div>
-      <header style={{ padding: 30, background: "#1f7a3a", color: "white" }}>
-        <h1>Green Bananas General Trading</h1>
-        <p>Import, export, sourcing, and global marketplace</p>
-      </header>
+    body {
+      margin: 0;
+      font-family: 'Poppins', Arial, sans-serif;
+      background: #f8fafc;
+      color: #222;
+      overflow-x: hidden;
+    }
 
-      <section style={{ padding: 30 }}>
-        <h2>Marketplace</h2>
+    .font-ar {
+      font-family: 'Cairo', sans-serif !important;
+    }
 
-        {items.map((item) => (
-          <div key={item.id} style={{ border: "1px solid #ddd", padding: 20, marginBottom: 15 }}>
-            <h3>{item.item_name}</h3>
-            <p>{item.description}</p>
-            <strong>${item.price}</strong>
-          </div>
-        ))}
-      </section>
+    .bg-brand {
+      background-color: var(--brand-green);
+    }
 
-      <section style={{ padding: 30, background: "#f5f5f5" }}>
-        <h2>Contact Us</h2>
+    .text-brand {
+      color: var(--brand-green);
+    }
 
-        <form onSubmit={sendMessage}>
-          <input
-            placeholder="Name"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
-            required
-          />
+    .border-brand {
+      border-color: var(--brand-green);
+    }
 
-          <input
-            placeholder="Email"
-            type="email"
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            required
-          />
+    #main-site {
+      display: none;
+    }
 
-          <textarea
-            placeholder="Message"
-            value={form.message}
-            onChange={(e) => setForm({ ...form, message: e.target.value })}
-            required
-          />
+    .fade-in {
+      animation: fadeIn 0.8s ease-in forwards;
+    }
 
-          <button type="submit">Send</button>
-        </form>
-      </section>
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .logo-promising {
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.12));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .hero-gradient {
+      background: linear-gradient(to right, #1f7a3a, #f5c400);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ENTRY PAGE -->
+  <section id="entry-page" class="min-h-screen w-full flex flex-col items-center justify-center bg-white text-center px-6">
+    <div class="max-w-xl">
+      <img src="1000025815.png" alt="Green Bananas Logo" class="h-32 md:h-48 mx-auto mb-8 logo-promising" />
+
+      <h1 class="text-3xl md:text-5xl font-extrabold text-brand mb-4 uppercase tracking-wider"
+          data-en="Green Bananas is your choice"
+          data-ar="جرين بناناس هي خيارك">
+        Green Bananas is your choice
+      </h1>
+
+      <p class="text-gray-600 mb-8"
+         data-en="Trusted global trading, import, export, and business solutions."
+         data-ar="حلول موثوقة للتجارة العالمية والاستيراد والتصدير والأعمال.">
+        Trusted global trading, import, export, and business solutions.
+      </p>
+
+      <button onclick="startJourney()" class="bg-brand text-white px-10 py-4 rounded-full font-bold text-xl shadow-2xl hover:scale-110 transition-all duration-300">
+        <span data-en="Click here to start your journey" data-ar="اضغط هنا لتبدأ رحلتك">
+          Click here to start your journey
+        </span>
+        <i class="fas fa-arrow-right mx-3"></i>
+      </button>
     </div>
-  );
-}
+  </section>
+
+  <!-- MAIN WEBSITE -->
+  <main id="main-site" class="fade-in">
+
+    <!-- NAVBAR -->
+    <nav class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 px-6 md:px-12 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+        <img src="1000025815.png" alt="Logo" class="h-12" />
+        <span class="font-black text-brand text-xl uppercase">Green Bananas</span>
+      </div>
+
+      <div class="hidden md:flex gap-6 font-bold">
+        <a href="#about" class="hover:text-brand">About</a>
+        <a href="#services" class="hover:text-brand">Services</a>
+        <a href="#marketplace" class="hover:text-brand">Marketplace</a>
+        <a href="#contact" class="hover:text-brand">Contact</a>
+      </div>
+
+      <button onclick="toggleLang()" class="border-2 border-brand text-brand px-4 py-1 rounded-lg font-bold hover:bg-brand hover:text-white transition">
+        <span id="lang-btn">العربية</span>
+      </button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero-gradient text-white py-24 px-6 text-center">
+      <h1 class="text-4xl md:text-6xl font-black mb-5"
+          data-en="Green Bananas General Trading"
+          data-ar="جرين بناناس للتجارة العامة">
+        Green Bananas General Trading
+      </h1>
+
+      <p class="text-lg md:text-2xl mb-10"
+         data-en="Import, export, sourcing, marketplace, and international business partnerships."
+         data-ar="الاستيراد والتصدير والتوريد والسوق العالمي والشراكات التجارية الدولية.">
+        Import, export, sourcing, marketplace, and international business partnerships.
+      </p>
+
+      <a href="#contact" class="bg-black text-yellow-300 px-8 py-4 rounded-full font-bold inline-block hover:scale-105 transition">
+        Contact Us
+      </a>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="py-20 px-6 text-center bg-white">
+      <h2 class="text-3xl font-black text-brand mb-6"
+          data-en="About Us"
+          data-ar="من نحن">
+        About Us
+      </h2>
+
+      <p class="max-w-3xl mx-auto text-gray-600 leading-8"
+         data-en="Green Bananas is a general trading company focused on reliable international trade, product sourcing, import, export, real estate opportunities, and trusted business partnerships."
+         data-ar="جرين بناناس هي شركة تجارة عامة تركز على التجارة الدولية الموثوقة وتوريد المنتجات والاستيراد والتصدير والفرص العقارية والشراكات التجارية.">
+        Green Bananas is a general trading company focused on reliable international trade, product sourcing, import, export, real estate opportunities, and trusted business partnerships.
+      </p>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services" class="py-20 px-6 bg-slate-50 text-center">
+      <h2 class="text-3xl font-black text-brand mb-12"
+          data-en="Our Services"
+          data-ar="خدماتنا">
+        Our Services
+      </h2>
+
+      <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div class="bg-white p-8 rounded-2xl shadow-lg">
+          <h3 class
