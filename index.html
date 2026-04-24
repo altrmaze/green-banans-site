@@ -1,116 +1,155 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="main-html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GREEN BANANAS | Enterprise Global Marketplace</title>
-    
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Green Bananas | Your Choice</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --gb-green: #1b4332; }
-        body { font-family: 'Inter', system-ui, sans-serif; background: #fdfdfd; }
-        .market-card { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .market-card:hover { transform: translateY(-8px); border-color: #1b4332; }
-        .nav-blur { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        :root { --brand-green: #2D5A27; }
+        body { font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        .font-ar { font-family: 'Cairo', sans-serif !important; }
+        .bg-brand { background-color: var(--brand-green); }
+        .text-brand { color: var(--brand-green); }
+        
+        /* Smooth Page Transition */
+        #main-site { display: none; }
+        .fade-in { animation: fadeIn 0.8s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Floating Logo Effect */
+        .logo-promising {
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-slate-50">
 
-    <script type="text/babel">
-        const { useState, useEffect } = React;
-        const supabase = supabase.createClient('https://xlmgtjikvmagdtoksdfo.supabase.co', 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2');
+    <section id="entry-page" class="h-screen w-full flex flex-col items-center justify-center bg-white text-center px-6">
+        <div class="max-w-xl">
+            <img src="1000025815.png" alt="Green Bananas Logo" class="h-32 md:h-48 mx-auto mb-8 logo-promising">
+            
+            <h1 class="text-3xl md:text-5xl font-extrabold text-brand mb-4 uppercase tracking-wider" 
+                data-en="Green Bananas is your choice" 
+                data-ar="جرين بناناس هي خيارك">
+                Green Bananas is your choice
+            </h1>
+            
+            <p class="text-gray-500 text-lg mb-10 italic" 
+               data-en="Reliability. Quality. Fairness." 
+               data-ar="الموثوقية. الجودة. النزاهة.">
+                Reliability. Quality. Fairness.
+            </p>
 
-        function App() {
-            const [items, setItems] = useState([]);
-            const [lang, setLang] = useState('en');
+            <button onclick="startJourney()" class="bg-brand text-white px-10 py-4 rounded-full font-bold text-xl shadow-2xl hover:scale-110 hover:bg-green-800 transition-all duration-300">
+                <span data-en="Click here to start your journey" data-ar="اضغط هنا لتبدأ رحلتك">
+                    Click here to start your journey
+                </span>
+                <i class="fas fa-arrow-right ml-3 mr-3"></i>
+            </button>
+        </div>
+    </section>
 
-            const content = {
-                en: { title: "Global Assets", sub: "Verified Corporate Marketplace", btn: "View Details", sell: "List Item" },
-                ar: { title: "الأصول العالمية", sub: "سوق الشركات المعتمد", btn: "عرض التفاصيل", sell: "إدراج سلعة" }
-            };
-
-            useEffect(() => { 
-                loadMarket();
-            }, []);
-
-            const loadMarket = async () => {
-                const { data } = await supabase.from('trading_items').select('*');
-                setItems(data || []);
-            };
-
-            return (
-                <div dir={lang === 'ar' ? 'rtl' : 'ltr'} className={lang === 'ar' ? 'font-serif' : ''}>
-                    {/* Enterprise Nav */}
-                    <nav className="nav-blur sticky top-0 z-50 border-b px-8 py-5 flex justify-between items-center">
-                        <div className="flex items-center space-x-4">
-                            <div className="bg-[#1b4332] text-white px-3 py-1 rounded font-black">GB</div>
-                            <h1 className="text-xl font-black tracking-tighter text-slate-800">GREEN BANANAS</h1>
-                        </div>
-                        <div className="flex items-center space-x-6">
-                            <select onChange={(e) => setLang(e.target.value)} className="text-xs font-bold border-none bg-transparent uppercase">
-                                <option value="en">English</option>
-                                <option value="ar">العربية</option>
-                            </select>
-                            <button className="bg-[#1b4332] text-white px-6 py-2 rounded-full text-xs font-bold shadow-lg">
-                                {content[lang].sell}
-                            </button>
-                        </div>
-                    </nav>
-
-                    {/* Professional Header */}
-                    <header className="py-20 text-center px-6 bg-slate-50">
-                        <h2 className="text-5xl font-black text-slate-900 mb-4">{content[lang].title}</h2>
-                        <p className="text-slate-400 font-medium uppercase tracking-widest text-xs">{content[lang].sub}</p>
-                    </header>
-
-                    {/* Product Floor */}
-                    <main className="container mx-auto px-6 py-16">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                            {items.map(item => (
-                                <div key={item.id} className="market-card bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <span className="text-[10px] font-black text-[#1b4332] uppercase bg-green-50 px-2 py-1 rounded-md">{item.category}</span>
-                                        <i className="fas fa-shield-check text-blue-500 text-xs"></i>
-                                    </div>
-                                    
-                                    {/* Placeholder for Product Image */}
-                                    <div className="h-48 bg-slate-50 rounded-2xl mb-6 flex items-center justify-center">
-                                        <i className="fas fa-box-open text-slate-200 text-4xl"></i>
-                                    </div>
-
-                                    <h3 className="text-xl font-bold text-slate-800 mb-2">{item.item_name}</h3>
-                                    <p className="text-xs text-slate-400 mb-8 line-clamp-2">High-quality industrial grade asset verified for global shipment.</p>
-
-                                    <div className="mt-auto pt-6 border-t flex justify-between items-center">
-                                        <span className="text-xs font-bold text-slate-500">Contact for Quote</span>
-                                        <button className="text-[#1b4332] font-black text-xs uppercase tracking-wider hover:underline">
-                                            {content[lang].btn}
-                                        </button>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </main>
-
-                    {/* AI Support - Professional Placement */}
-                    <div className="fixed bottom-8 right-8">
-                        <button className="bg-[#1b4332] text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center">
-                            <i className="fas fa-comment-alt"></i>
-                        </button>
+    <main id="main-site" class="fade-in">
+        
+        <nav class="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50">
+            <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <img src="1000025815.png" alt="Logo" class="h-12 pointer-cursor" onclick="location.reload()">
+                
+                <div class="flex items-center space-x-6">
+                    <div class="hidden md:flex space-x-8 font-bold text-xs uppercase tracking-tighter">
+                        <a href="#services" class="hover:text-green-700">Services</a>
+                        <a href="#contact" class="hover:text-green-700">Contact</a>
                     </div>
+                    <button onclick="toggleLang()" class="border-2 border-brand text-brand px-4 py-1 rounded-lg font-bold hover:bg-brand hover:text-white transition">
+                        <span id="lang-btn">العربية</span>
+                    </button>
                 </div>
-            );
+            </div>
+        </nav>
+
+        <section class="relative h-[70vh] flex items-center justify-center overflow-hidden">
+            <video autoplay loop muted playsinline class="absolute z-0 w-auto min-w-full min-h-full max-w-none">
+                <source src="1000025818.mp4" type="video/mp4">
+            </video>
+            <div class="relative z-10 w-full h-full bg-black/50 flex flex-col justify-center items-center text-white text-center px-4">
+                <h2 class="text-4xl md:text-6xl font-bold mb-4 uppercase" data-en="Promising Trading Solutions" data-ar="حلول تجارية واعدة">Promising Trading Solutions</h2>
+                <p class="text-xl max-w-2xl opacity-90" data-en="Green Bananas is your choice for global excellence." data-ar="جرين بناناس هي خيارك للتميز العالمي.">Green Bananas is your choice for global excellence.</p>
+            </div>
+        </section>
+
+        <section id="services" class="py-20 container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-10">
+                <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition border-b-4 border-brand">
+                    <i class="fas fa-globe text-brand text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2" data-en="Global Export" data-ar="تصدير عالمي">Global Export</h3>
+                    <p class="text-gray-600" data-en="We deliver quality across all borders." data-ar="نحن نقدم الجودة عبر جميع الحدود.">We deliver quality across all borders.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition border-b-4 border-brand">
+                    <i class="fas fa-shield-check text-brand text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2" data-en="Trusted Quality" data-ar="جودة موثوقة">Trusted Quality</h3>
+                    <p class="text-gray-600" data-en="Every product is vetted for excellence." data-ar="يتم فحص كل منتج للتأكد من تميزه.">Every product is vetted for excellence.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition border-b-4 border-brand">
+                    <i class="fas fa-hand-holding-heart text-brand text-4xl mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2" data-en="Fair Trading" data-ar="تجارة عادلة">Fair Trading</h3>
+                    <p class="text-gray-600" data-en="Your success is our priority." data-ar="نجاحكم هو أولويتنا.">Your success is our priority.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="py-20 bg-brand text-white text-center">
+            <h2 class="text-3xl font-bold mb-8" data-en="Contact Us" data-ar="تواصل معنا">Contact Us</h2>
+            <form class="max-w-lg mx-auto px-6 space-y-4">
+                <input type="text" placeholder="Name" class="w-full p-4 rounded-lg text-black outline-none">
+                <textarea placeholder="Message" class="w-full p-4 rounded-lg text-black outline-none"></textarea>
+                <button class="bg-white text-brand px-12 py-4 rounded-full font-bold uppercase hover:bg-gray-100 transition shadow-lg" data-en="Send Now" data-ar="أرسل الآن">Send Now</button>
+            </form>
+        </section>
+
+        <footer class="py-10 text-center text-gray-400 text-sm">
+            <img src="1000025815.png" alt="Logo" class="h-10 mx-auto mb-4 opacity-50 grayscale">
+            <p>© 2026 Green Bananas. All rights reserved.</p>
+        </footer>
+    </main>
+
+    <script>
+        // PAGE TRANSITION
+        function startJourney() {
+            document.getElementById('entry-page').style.display = 'none';
+            document.getElementById('main-site').style.display = 'block';
+            window.scrollTo(0, 0);
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        // LANGUAGE TOGGLE
+        let currentLang = 'en';
+        function toggleLang() {
+            const html = document.getElementById('main-html');
+            const elements = document.querySelectorAll('[data-en]');
+            const btn = document.getElementById('lang-btn');
+
+            if (currentLang === 'en') {
+                html.setAttribute('dir', 'rtl');
+                document.body.classList.add('font-ar');
+                elements.forEach(el => el.textContent = el.getAttribute('data-ar'));
+                btn.textContent = "English";
+                currentLang = 'ar';
+            } else {
+                html.setAttribute('dir', 'ltr');
+                document.body.classList.remove('font-ar');
+                elements.forEach(el => el.textContent = el.getAttribute('data-en'));
+                btn.textContent = "العربية";
+                currentLang = 'en';
+            }
+        }
     </script>
 </body>
 </html>
