@@ -1,43 +1,48 @@
-<div id="inventory-list" style="max-width: 600px; margin: auto; padding: 20px;">
-    <p>Loading our latest inventory...</p>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // 2. Your Secret Connection Keys (Paste yours between the 'quotes')
-  const _URL = 'sb_publishable_DaKgyW1UYRZxkwaXIAM_Sw_sKDBrdX2'; 
-  const _KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhsbWd0amlrdm1hZ2R0b2tzZGZvIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Njk2OTU1NiwiZXhwIjoyMDkyNTQ1NTU2fQ.yszjvzW4npR4Sw-hsivjzCEpCG4flZt2e_gLUbU8S6c';
+  // 2. CONNECTION (Double-check these two strings!)
+  const _URL = 'https://YOUR_PROJECT_URL.supabase.co'; 
+  const _KEY = 'YOUR_LONG_ANON_PUBLIC_KEY';
 
   const supabase = supabase.createClient(_URL, _KEY);
 
-  // 3. The Function to get your cars/products
   async function displayTradingItems() {
-    const { data, error } = await supabase
-      .from('trading_items')
-      .select('*');
-
     const listArea = document.getElementById('inventory-list');
+    
+    try {
+      const { data, error } = await supabase
+        .from('trading_items')
+        .select('*');
 
-    if (error) {
-      listArea.innerHTML = "<p style='color:red;'>Connection Error. Please check keys.</p>";
-      return;
+      if (error) {
+        // This will print the EXACT error from Supabase on your screen
+        listArea.innerHTML = `<p style="color:red;">Database Error: ${error.message}</p>`;
+        return;
+      }
+
+      if (data.length === 0) {
+        listArea.innerHTML = "<p>Table is connected, but no items found. Add a row in Supabase!</p>";
+        return;
+      }
+
+      listArea.innerHTML = ""; 
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.style = "border: 1px solid #D4AF37; margin: 10px; padding: 15px; border-radius: 8px; background: #1a1a1a;";
+        card.innerHTML = `
+          <h3 style="color:#D4AF37; margin:0;">${item.item_name}</h3>
+          <p style="color:#ccc; font-size:0.9em;">Category: ${item.category}</p>
+          <p style="font-size: 1.2em; color:#fff;">Price: $${item.price}</p>
+          <span style="color:#D4AF37; font-weight:bold;">${item.status}</span>
+        `;
+        listArea.appendChild(card);
+      });
+
+    } catch (err) {
+      listArea.innerHTML = `<p style="color:red;">System Error: ${err.message}</p>`;
     }
-
-    // 4. Clear the "Loading" text and show items
-    listArea.innerHTML = ""; 
-    data.forEach(item => {
-      const card = document.createElement('div');
-      card.style = "border: 1px solid #D4AF37; margin: 10px; padding: 15px; border-radius: 8px;";
-      card.innerHTML = `
-        <h3 style="color:#D4AF37;">${item.item_name}</h3>
-        <p>Category: ${item.category} | Status: <strong>${item.status}</strong></p>
-        <p style="font-size: 1.2em;">Price: $${item.price}</p>
-      `;
-      listArea.appendChild(card);
-    });
   }
 
-  // Run the function when the page opens
   displayTradingItems();
 </script>
