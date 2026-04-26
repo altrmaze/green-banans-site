@@ -1,71 +1,91 @@
-/* Modern Classic Style */
-body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
+* {
     margin: 0;
-    color: #333;
-    line-height: 1.6;
+    padding: 0;
+    box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #1f1f1f;
+}
+
+/* Header */
 header {
-    background: #fff;
-    padding: 20px 5%;
-    border-bottom: 1px solid #eee;
+    width: 100%;
+    background: #ffffff;
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 nav {
+    max-width: 1200px;
+    margin: auto;
+    padding: 18px 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .logo {
-    font-weight: bold;
-    font-size: 1.5rem;
-    color: #2d5a27; /* Banana Green */
+    font-size: 24px;
+    font-weight: 800;
+    color: #2d5a27;
+    letter-spacing: 2px;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 20px;
+    gap: 25px;
 }
 
-.hero {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('your-bg-image.jpg') center/cover;
-    height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-}
-
-.btn {
-    background: #2d5a27;
-    color: white;
-    padding: 12px 25px;
+.nav-links a {
     text-decoration: none;
-    border-radius: 5px;
+    color: #222;
+    font-weight: 600;
     transition: 0.3s;
 }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    padding: 50px 5%;
+.nav-links a:hover {
+    color: #f5c400;
 }
 
-.card {
+/* Hero */
+.hero {
+    min-height: 90vh;
+    background: linear-gradient(135deg, #2d5a27, #6fbf3f, #f5c400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    padding: 20px;
-    border: 1px solid #f0f0f0;
-    transition: transform 0.3s;
+    padding: 40px 20px;
 }
 
-.card:hover {
-    transform: translateY(-5px);
+.hero-content {
+    max-width: 800px;
+    color: white;
 }
+
+.hero h1 {
+    font-size: 58px;
+    margin-bottom: 20px;
+    font-weight: 900;
+}
+
+.hero p {
+    font-size: 24px;
+    margin-bottom: 35px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 35px;
+    background: #ffffff;
+    color: #2d5a27;
