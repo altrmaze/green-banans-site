@@ -1,30 +1,56 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Bananas | Trading & Cosmetics</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-<script>
-  // 1. Connect to the Database
-  const supabaseUrl = 'YOUR_SUPABASE_URL'
-  const supabaseKey = 'YOUR_SUPABASE_KEY'
-  const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+    <header>
+        <nav>
+            <div class="logo">GREEN BANANAS</div>
+            <ul class="nav-links">
+                <li><a href="#cosmetics">Cosmetics</a></li>
+                <li><a href="#trading">General Trading</a></li>
+                <li><a href="#wha">W H A Division</a></li>
+            </ul>
+        </nav>
+    </header>
 
-  // 2. Fetch the data from your "trading_items" table
-  async function loadInventory() {
-    const { data, error } = await supabase
-      .from('trading_items')
-      .select('*')
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Fresh. Motivating. Promising.</h1>
+            <p>Go Green with the Giovanni Collection</p>
+            <a href="#cosmetics" class="btn">Explore Water Splash</a>
+        </div>
+    </section>
 
-    if (error) {
-      console.error('Error loading data:', error)
-      return
-    }
+    <section id="cosmetics" class="products">
+        <h2>Water Splash Collection</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="placeholder-img">Water Splash Perfume</div>
+                <h3>Water Splash</h3>
+                <p>Signature Body Splash & Perfume</p>
+            </div>
+            <div class="card">
+                <div class="placeholder-img">Giovanni Collection</div>
+                <h3>Giovanni Edition</h3>
+                <p>Premium Cosmetics line coming soon.</p>
+            </div>
+        </div>
+    </section>
 
-    // 3. Show the data on the screen
-    const display = document.getElementById('inventory-list')
-    data.forEach(item => {
-      const itemDiv = document.createElement('div')
-      itemDiv.innerHTML = `<h3>${item.item_name}</h3><p>Category: ${item.category} | Price: $${item.price}</p>`
-      display.appendChild(itemDiv)
-    })
-  }
+    <section id="wha" class="trading-box">
+        <h2>W H A Division</h2>
+        <p>Real Estate & Automotive Solutions</p>
+    </section>
 
-  loadInventory()
-</script>
+    <footer>
+        <p>&copy; 2026 Green Bananas. Go Green.</p>
+    </footer>
+
+</body>
+</html>
