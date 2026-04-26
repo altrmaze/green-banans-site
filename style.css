@@ -1,42 +1,71 @@
-/* GREEN BANANAS Professional Style */
+/* Modern Classic Style */
 body {
-    background-color: #0d0d0d; /* Deep Black */
-    color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    color: #333;
+    line-height: 1.6;
 }
 
 header {
-    background-color: #1a1a1a;
-    border-bottom: 2px solid #D4AF37; /* Golden Border */
-    padding: 20px;
-    text-align: center;
+    background: #fff;
+    padding: 20px 5%;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
-h1 {
-    color: #D4AF37; /* Gold */
-    text-transform: uppercase;
-    letter-spacing: 2px;
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.container {
-    padding: 40px;
-    text-align: center;
-}
-
-.btn-contact {
-    background-color: #D4AF37;
-    color: #000;
-    padding: 10px 20px;
-    text-decoration: none;
+.logo {
     font-weight: bold;
+    font-size: 1.5rem;
+    color: #2d5a27; /* Banana Green */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.hero {
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('your-bg-image.jpg') center/cover;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+}
+
+.btn {
+    background: #2d5a27;
+    color: white;
+    padding: 12px 25px;
+    text-decoration: none;
     border-radius: 5px;
+    transition: 0.3s;
 }
 
-footer {
-    margin-top: 50px;
-    font-size: 0.8em;
-    color: #666;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    padding: 50px 5%;
 }
 
+.card {
+    text-align: center;
+    padding: 20px;
+    border: 1px solid #f0f0f0;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
