@@ -1,7 +1,6 @@
-import { createContext, useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import { createClient } from '@supabase/supabase-js'
-
-const SupabaseContext = createContext(null)
+import { SupabaseContext } from './supabaseContext'
 
 function createSupabaseClient() {
   const url = import.meta.env.VITE_SUPABASE_URL
@@ -18,8 +17,4 @@ export function SupabaseProvider({ children }) {
   const client = useMemo(() => createSupabaseClient(), [])
 
   return <SupabaseContext.Provider value={client}>{children}</SupabaseContext.Provider>
-}
-
-export function useSupabaseContext() {
-  return useContext(SupabaseContext)
 }

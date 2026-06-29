@@ -1,8 +1,8 @@
-import { useMemo } from 'react'
-import { useSupabaseContext } from '../context/SupabaseContext'
+import { useContext, useMemo } from 'react'
+import { SupabaseContext } from '../context/supabaseContext'
 
 function useSupabase() {
-  const client = useSupabaseContext()
+  const client = useContext(SupabaseContext)
 
   return useMemo(
     () => ({
