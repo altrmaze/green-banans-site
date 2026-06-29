@@ -1,7 +1,4 @@
 import os
-import threading
-import time
-import requests
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,25 +8,13 @@ from crewai.tools import tool
 from langchain_openai import ChatOpenAI
 from langchain_community.tools import DuckDuckGoSearchRun
 import yfinance as yf
-import streamlit as st
 
 # ==========================================
 # 1. SETUP & CONFIGURATION
 # ==========================================
 # Set your OpenAI API key as an environment variable before running:
 #   export OPENAI_API_KEY="sk-..."
-# Then launch with:  streamlit run market_engine.py
-
-openai_key = os.getenv("OPENAI_API_KEY")
-if not openai_key:
-    raise EnvironmentError(
-        "OPENAI_API_KEY environment variable is not set. "
-        "Export it before running: export OPENAI_API_KEY='sk-...'"
-    )
-
-# Global LLM settings - low temperature for sharp analytical logic
-llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
-search_tool = DuckDuckGoSearchRun()
+# Then launch the UI with:  streamlit run app.py
 
 # ==========================================
 # 2. BACKEND ENGINE (FastAPI Architecture)
@@ -69,7 +54,16 @@ class MarketScanRequest(BaseModel):
 
 @app.post("/api/v1/predict-best-stock")
 async def get_single_best_stock(payload: MarketScanRequest):
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if not openai_key:
+        raise HTTPException(
+            status_code=500,
+            detail="OPENAI_API_KEY environment variable is not set.",
+        )
+
     try:
+        llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+        search_tool = DuckDuckGoSearchRun()
         tickers_string = ", ".join(payload.watch_list)
 
         # Agent 1: Quantitative Specialist
@@ -159,83 +153,8 @@ async def get_single_best_stock(payload: MarketScanRequest):
 
 
 # ==========================================
-# 3. STREAMLIT FRONTEND
+# 3. RUN SERVER (standalone mode)
 # ==========================================
 
-def run_fastapi():
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="warning")
-
-
-def main():
-    st.set_page_config(
-        page_title="Greens ACC – Market Intelligence Engine",
-        page_icon="🟢",
-        layout="wide",
-    )
-
-    st.title("🟢 Greens ACC — AI Market Intelligence Engine")
-    st.caption("Powered by CrewAI & GPT-4o | Technical Analysis + News Sentiment")
-
-    st.divider()
-
-    st.subheader("📋 Build Your Watchlist")
-    tickers_input = st.text_input(
-        "Enter stock tickers (comma-separated)",
-        placeholder="e.g. AAPL, TSLA, NVDA, MSFT, AMZN",
-    )
-
-    col1, _ = st.columns([1, 3])
-    with col1:
-        analyze = st.button("🔍 Run AI Analysis", type="primary", use_container_width=True)
-
-    if analyze:
-        if not tickers_input.strip():
-            st.error("⚠️ Please enter at least one stock ticker.")
-        else:
-            tickers = [t.strip().upper() for t in tickers_input.split(",") if t.strip()]
-            st.info(
-                f"🤖 AI Crew is analyzing **{len(tickers)} stock(s)**: {', '.join(tickers)}"
-            )
-
-            with st.spinner("Running multi-agent analysis… This may take 1–3 minutes."):
-                try:
-                    response = requests.post(
-                        "http://localhost:8000/api/v1/predict-best-stock",
-                        json={"watch_list": tickers},
-                        timeout=300,
-                    )
-
-                    if response.status_code == 200:
-                        data = response.json()
-                        st.success("✅ Analysis Complete!")
-                        st.divider()
-                        st.subheader("🏆 AI Committee Recommendation")
-                        st.markdown(data["recommendation"])
-                    else:
-                        st.error(f"API Error {response.status_code}: {response.text}")
-
-                except requests.exceptions.ConnectionError:
-                    st.error(
-                        "❌ Cannot connect to the backend API. "
-                        "Ensure the server started correctly on port 8000."
-                    )
-                except requests.exceptions.Timeout:
-                    st.error(
-                        "⏱️ Request timed out. The analysis is taking longer than expected. "
-                        "Try a smaller watchlist."
-                    )
-                except Exception as e:
-                    st.error(f"Unexpected error: {str(e)}")
-
-    st.divider()
-    st.caption(
-        "⚠️ This tool is for educational and informational purposes only. "
-        "Not financial advice."
-    )
-
-
 if __name__ == "__main__":
-    api_thread = threading.Thread(target=run_fastapi, daemon=True)
-    api_thread.start()
-    time.sleep(2)
-    main()
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
