@@ -5,12 +5,15 @@
 # Quotations, Payroll, Dashboard, Print Invoice, SQLite database
 # ============================================================
 
+import os
+
 from flask import Flask, request, redirect, url_for, render_template_string, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     UserMixin, LoginManager, login_user,
     logout_user, login_required, current_user
 )
+from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
 
@@ -19,7 +22,7 @@ from datetime import datetime
 # ============================================================
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "change-this-secret-key"
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", os.urandom(24).hex())
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///greenacc.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -173,7 +176,7 @@ def login():
     if request.method == "POST":
         user = User.query.filter_by(username=request.form["username"]).first()
 
-        if user and user.password == request.form["password"]:
+        if user and check_password_hash(user.password, request.form["password"]):
             login_user(user)
             return redirect(url_for("dashboard"))
 
@@ -515,7 +518,7 @@ def users():
     if request.method == "POST":
         user = User(
             username=request.form["username"],
-            password=request.form["password"],
+            password=generate_password_hash(request.form["password"]),
             role=request.form["role"]
         )
         db.session.add(user)
@@ -568,7 +571,7 @@ with app.app_context():
     if not admin:
         admin = User(
             username="admin",
-            password="admin123",
+            password=generate_password_hash(os.environ.get("GREENACC_ADMIN_PASSWORD", "change-me-now")),
             role="admin"
         )
         db.session.add(admin)
