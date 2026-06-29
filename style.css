@@ -89,3 +89,235 @@ nav {
     padding: 15px 35px;
     background: #ffffff;
     color: #2d5a27;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #f5c400;
+    color: #1f1f1f;
+}
+
+/* Products / Cosmetics */
+.products {
+    padding: 80px 25px;
+    max-width: 1200px;
+    margin: auto;
+    text-align: center;
+}
+
+.products h2 {
+    font-size: 36px;
+    color: #2d5a27;
+    margin-bottom: 40px;
+    font-weight: 800;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.card {
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 30px 20px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+}
+
+.placeholder-img {
+    background: linear-gradient(135deg, #2d5a27, #6fbf3f);
+    color: white;
+    border-radius: 12px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+
+.card h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #1f1f1f;
+}
+
+.card p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* General Trading */
+.trading-section {
+    background: #f4f9f4;
+    padding: 80px 25px;
+    text-align: center;
+}
+
+.trading-section h2 {
+    font-size: 36px;
+    color: #2d5a27;
+    margin-bottom: 16px;
+    font-weight: 800;
+}
+
+.trading-section p {
+    font-size: 18px;
+    color: #555;
+    max-width: 680px;
+    margin: 0 auto 30px;
+}
+
+.trading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.trading-item {
+    background: white;
+    border-radius: 14px;
+    padding: 28px 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d5a27;
+}
+
+.trading-item span {
+    display: block;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+/* W H A Division */
+.trading-box {
+    background: #1f1f1f;
+    color: white;
+    padding: 80px 25px;
+    text-align: center;
+}
+
+.trading-box h2 {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    color: #f5c400;
+}
+
+.trading-box p {
+    font-size: 18px;
+    color: #ccc;
+}
+
+/* Market Intelligence Section */
+.market-section {
+    background: linear-gradient(135deg, #0a1628, #1a3a2a);
+    color: white;
+    padding: 90px 25px;
+    text-align: center;
+}
+
+.market-section h2 {
+    font-size: 40px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    color: #6fbf3f;
+}
+
+.market-section .subtitle {
+    font-size: 18px;
+    color: #aaa;
+    max-width: 600px;
+    margin: 0 auto 20px;
+}
+
+.market-section .badge {
+    display: inline-block;
+    background: rgba(111, 191, 63, 0.15);
+    border: 1px solid #6fbf3f;
+    color: #6fbf3f;
+    padding: 6px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+}
+
+.market-features {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.market-feature {
+    background: rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 20px 28px;
+    min-width: 180px;
+    font-size: 14px;
+    color: #ddd;
+}
+
+.market-feature span {
+    display: block;
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.btn-market {
+    display: inline-block;
+    padding: 16px 44px;
+    background: #6fbf3f;
+    color: #0a1628;
+    font-weight: 800;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 17px;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-market:hover {
+    background: #f5c400;
+    color: #1f1f1f;
+    transform: translateY(-2px);
+}
+
+.disclaimer {
+    margin-top: 22px;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Footer */
+footer {
+    background: #0f0f0f;
+    color: #888;
+    text-align: center;
+    padding: 28px;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .hero h1 { font-size: 36px; }
+    .market-section h2 { font-size: 28px; }
+    .products h2, .trading-section h2 { font-size: 26px; }
+}
