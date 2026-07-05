@@ -17,6 +17,8 @@ BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000")
 LOCAL_BACKEND_URLS = {"http://127.0.0.1:8000", "http://localhost:8000"}
 MAX_TICKERS = 8
 TICKER_PATTERN = re.compile(r"^[A-Z][A-Z0-9.-]{0,9}$")
+WORKSPACE_TO_QUERY = {"Market Intelligence": "market", "Admin Console": "admin"}
+QUERY_TO_WORKSPACE = {value: key for key, value in WORKSPACE_TO_QUERY.items()}
 
 
 def _run_api() -> None:
@@ -103,6 +105,20 @@ def _request_analysis(accepted_tickers: list[str]) -> bool:
             return False
 
 
+def _workspace_from_query() -> str:
+    raw_workspace = st.query_params.get("workspace", "market")
+    workspace_key = raw_workspace[0] if isinstance(raw_workspace, list) else raw_workspace
+    return QUERY_TO_WORKSPACE.get(str(workspace_key).lower(), "Market Intelligence")
+
+
+def _sync_workspace_query(selected_workspace: str) -> None:
+    target = WORKSPACE_TO_QUERY[selected_workspace]
+    current = st.query_params.get("workspace", "")
+    current_value = current[0] if isinstance(current, list) else current
+    if current_value != target:
+        st.query_params["workspace"] = target
+
+
 def _render_market_page(backend_ready: bool) -> None:
     st.markdown(
         """
@@ -128,6 +144,10 @@ def _render_market_page(backend_ready: bool) -> None:
         st.warning("OPENAI_API_KEY is not set. Add it before running analysis requests.")
     if not backend_ready:
         st.error("Backend health check failed. Confirm FastAPI is running and BACKEND_URL is correct.")
+    else:
+        st.success("Backend connected and ready.")
+
+    st.link_button("Open Admin Console", "?workspace=admin", use_container_width=True)
 
     st.subheader("Build watchlist")
     tickers_input = st.text_input(
@@ -191,6 +211,7 @@ def _render_admin_page(backend_ready: bool) -> None:
     """,
         unsafe_allow_html=True,
     )
+    st.link_button("Back to Market Intelligence", "?workspace=market", use_container_width=True)
 
     if not _admin_is_configured():
         st.error("Admin credentials are not configured. Set ADMIN_USERNAME and ADMIN_PASSWORD.")
@@ -331,7 +352,13 @@ st.markdown(
 )
 
 backend_ready = _ensure_backend_ready()
-page = st.sidebar.radio("Workspace", ["Market Intelligence", "Admin Console"])
+default_workspace = _workspace_from_query()
+page = st.sidebar.radio(
+    "Workspace",
+    ["Market Intelligence", "Admin Console"],
+    index=0 if default_workspace == "Market Intelligence" else 1,
+)
+_sync_workspace_query(page)
 if page == "Market Intelligence":
     _render_market_page(backend_ready=backend_ready)
 else:
