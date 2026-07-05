@@ -34,5 +34,32 @@ export async function runAgentWithSkill(skillPath: string, userPrompt: string) {
   }
 }
 
+export async function runOpenAIResponses(userPrompt: string) {
+  try {
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + (process.env.OPENAI_API_KEY ?? '')
+      },
+      body: JSON.stringify({
+        model: 'gpt-4.1-mini',
+        input: userPrompt
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('OpenAI Responses Output:\n', data);
+    return data;
+  } catch (error) {
+    console.error('Failed to call OpenAI Responses API:', error);
+  }
+}
+
 // Example usage:
 // runAgentWithSkill('./skills/image-to-code', 'Convert my uploaded wireframe into a clean tailwind layout');
+// runOpenAIResponses('Summarize the latest frontend architecture recommendations.');
