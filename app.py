@@ -7,6 +7,7 @@ import os
 import re
 import threading
 import time
+from datetime import datetime, timezone
 
 import requests
 import streamlit as st
@@ -74,6 +75,34 @@ def _admin_is_configured() -> bool:
     return bool(username and password)
 
 
+def _request_analysis(accepted_tickers: list[str]) -> bool:
+    with st.spinner("Running analysis workflow. This may take up to a few minutes."):
+        try:
+            response = requests.post(
+                f"{BACKEND_URL}/api/v1/predict-best-stock",
+                json={"watch_list": accepted_tickers},
+                timeout=240,
+            )
+            if response.status_code == 200:
+                data = response.json()
+                st.success("Analysis complete")
+                st.markdown("### AI committee recommendation")
+                st.markdown(data.get("recommendation", "No recommendation returned."))
+                return True
+            try:
+                detail = response.json().get("detail", "Unknown API error")
+            except ValueError:
+                detail = response.text or "Unknown API error"
+            st.error(f"Request failed ({response.status_code}): {detail}")
+            return False
+        except requests.Timeout:
+            st.error("Request timed out. Retry with fewer tickers.")
+            return False
+        except requests.RequestException:
+            st.error("Could not reach backend service.")
+            return False
+
+
 def _render_market_page(backend_ready: bool) -> None:
     st.markdown(
         """
@@ -108,6 +137,31 @@ def _render_market_page(backend_ready: bool) -> None:
     )
     accepted_tickers, rejected_tickers = _parse_tickers(tickers_input)
 
+    queued_order = st.session_state.get("queued_admin_order")
+    if queued_order:
+        st.markdown("#### Pending admin order")
+        st.info(
+            "Admin queued this watchlist on "
+            f"{queued_order.get('created_at', 'unknown time')}: {', '.join(queued_order.get('watch_list', []))}"
+        )
+        queued_execute = st.button("Execute admin order", key="execute_admin_order", use_container_width=True)
+        queued_clear = st.button("Clear admin order", key="clear_admin_order", use_container_width=True)
+
+        if queued_clear:
+            st.session_state["queued_admin_order"] = None
+            st.success("Pending admin order cleared.")
+        elif queued_execute:
+            queued_tickers = queued_order.get("watch_list", [])
+            if not queued_tickers:
+                st.error("Queued order is empty.")
+            elif not os.getenv("OPENAI_API_KEY"):
+                st.error("Server AI key is missing. Set OPENAI_API_KEY and retry.")
+            elif not backend_ready:
+                st.error("Backend is unavailable. Wait a moment and retry.")
+            elif _request_analysis(queued_tickers):
+                st.session_state["queued_admin_order"] = None
+                st.success("Admin order executed and removed from queue.")
+
     if rejected_tickers:
         st.warning(f"Ignored invalid ticker(s): {', '.join(rejected_tickers)}")
     if len(accepted_tickers) == MAX_TICKERS and len([t for t in tickers_input.split(",") if t.strip()]) > MAX_TICKERS:
@@ -122,28 +176,7 @@ def _render_market_page(backend_ready: bool) -> None:
         elif not backend_ready:
             st.error("Backend is unavailable. Wait a moment and retry.")
         else:
-            with st.spinner("Running analysis workflow. This may take up to a few minutes."):
-                try:
-                    response = requests.post(
-                        f"{BACKEND_URL}/api/v1/predict-best-stock",
-                        json={"watch_list": accepted_tickers},
-                        timeout=240,
-                    )
-                    if response.status_code == 200:
-                        data = response.json()
-                        st.success("Analysis complete")
-                        st.markdown("### AI committee recommendation")
-                        st.markdown(data.get("recommendation", "No recommendation returned."))
-                    else:
-                        try:
-                            detail = response.json().get("detail", "Unknown API error")
-                        except ValueError:
-                            detail = response.text or "Unknown API error"
-                        st.error(f"Request failed ({response.status_code}): {detail}")
-                except requests.Timeout:
-                    st.error("Request timed out. Retry with fewer tickers.")
-                except requests.RequestException:
-                    st.error("Could not reach backend service.")
+            _request_analysis(accepted_tickers)
 
     st.caption("For informational use only. Not investment advice.")
 
@@ -226,6 +259,26 @@ def _render_admin_page(backend_ready: bool) -> None:
 
     st.subheader("Develop Notes")
     st.text_area("Admin development notes", placeholder="Track fixes, ideas, and next backend/frontend tasks.")
+
+    st.subheader("Mini Assistant Order")
+    st.caption("Queue a market-analysis order here, then execute it from the Market Intelligence page.")
+    admin_order_input = st.text_input(
+        "Order tickers (comma-separated)",
+        key="admin_order_input",
+        placeholder="AAPL, MSFT, NVDA",
+    )
+    admin_accepted, admin_rejected = _parse_tickers(admin_order_input)
+    if admin_rejected:
+        st.warning(f"Ignored invalid admin ticker(s): {', '.join(admin_rejected)}")
+    if st.button("Send order to Market page", key="send_admin_order", use_container_width=True):
+        if not admin_accepted:
+            st.error("Enter at least one valid ticker for the admin order.")
+        else:
+            st.session_state["queued_admin_order"] = {
+                "watch_list": admin_accepted,
+                "created_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+            }
+            st.success("Order sent. Open Market Intelligence to execute it.")
 
     if st.button("Logout", use_container_width=True):
         st.session_state["admin_authenticated"] = False
