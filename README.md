@@ -27,7 +27,11 @@ Optional:
 ```bash
 export BACKEND_URL="http://127.0.0.1:8000"
 export ALLOWED_ORIGINS="http://localhost:8501,http://127.0.0.1:8501"
+export ADMIN_USERNAME="your-admin-user"
+export ADMIN_PASSWORD="your-strong-password"
 ```
+
+If you want matching admin username/password, set both env vars to the same value.
 
 3. Start the app:
 
@@ -39,6 +43,7 @@ streamlit run app.py
 
 - `GET /api/v1/health`
 - `POST /api/v1/predict-best-stock`
+- `GET /api/v1/admin/monitor` (HTTP Basic auth via `ADMIN_USERNAME`/`ADMIN_PASSWORD`)
 
 Request body:
 

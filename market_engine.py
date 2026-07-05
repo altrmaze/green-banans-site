@@ -1,14 +1,17 @@
 import asyncio
+import base64
+import hmac
 import logging
 import os
 import re
 from functools import lru_cache
+from time import monotonic
 
 import uvicorn
 import yfinance as yf
 from crewai import Agent, Crew, Process, Task
 from crewai.tools import tool
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_openai import ChatOpenAI
@@ -27,6 +30,8 @@ from pydantic import BaseModel, Field, field_validator
 LOGGER = logging.getLogger("greens_market_engine")
 MAX_WATCHLIST = 8
 TICKER_PATTERN = re.compile(r"^[A-Z][A-Z0-9.-]{0,9}$")
+START_TIME = monotonic()
+REQUEST_STATS = {"total": 0, "success": 0, "error": 0, "total_latency_ms": 0.0}
 
 
 def _get_allowed_origins() -> list[str]:
@@ -45,6 +50,63 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def monitor_requests(request: Request, call_next):
+    started = monotonic()
+    REQUEST_STATS["total"] += 1
+    try:
+        response = await call_next(request)
+        if response.status_code < 400:
+            REQUEST_STATS["success"] += 1
+        else:
+            REQUEST_STATS["error"] += 1
+        return response
+    except Exception:
+        REQUEST_STATS["error"] += 1
+        raise
+    finally:
+        REQUEST_STATS["total_latency_ms"] += (monotonic() - started) * 1000
+
+
+def _parse_basic_auth(authorization: str) -> tuple[str, str] | None:
+    if not authorization or not authorization.startswith("Basic "):
+        return None
+    encoded = authorization[6:].strip()
+    try:
+        decoded = base64.b64decode(encoded).decode("utf-8")
+        username, password = decoded.split(":", maxsplit=1)
+        return username, password
+    except Exception:
+        return None
+
+
+def _admin_credentials() -> tuple[str | None, str | None]:
+    return os.getenv("ADMIN_USERNAME"), os.getenv("ADMIN_PASSWORD")
+
+
+def require_admin(authorization: str = Header(default="", alias="Authorization")) -> None:
+    expected_username, expected_password = _admin_credentials()
+    if not expected_username or not expected_password:
+        raise HTTPException(status_code=503, detail="Admin access is not configured.")
+
+    provided = _parse_basic_auth(authorization)
+    if not provided:
+        raise HTTPException(
+            status_code=401,
+            detail="Admin authentication required.",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    username, password = provided
+    valid_user = hmac.compare_digest(username, expected_username)
+    valid_pass = hmac.compare_digest(password, expected_password)
+    if not (valid_user and valid_pass):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid admin credentials.",
+            headers={"WWW-Authenticate": "Basic"},
+        )
 
 
 @lru_cache(maxsize=128)
@@ -191,6 +253,27 @@ def _run_recommendation(watch_list: list[str]) -> str:
 @app.get("/api/v1/health")
 async def health_check() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/api/v1/admin/monitor")
+async def admin_monitor(_: None = Depends(require_admin)) -> dict:
+    total = REQUEST_STATS["total"]
+    avg_latency_ms = 0.0 if total == 0 else REQUEST_STATS["total_latency_ms"] / total
+    return {
+        "status": "ok",
+        "uptime_seconds": round(monotonic() - START_TIME, 2),
+        "requests": {
+            "total": total,
+            "success": REQUEST_STATS["success"],
+            "error": REQUEST_STATS["error"],
+            "avg_latency_ms": round(avg_latency_ms, 2),
+        },
+        "config": {
+            "openai_key_configured": bool(os.getenv("OPENAI_API_KEY")),
+            "admin_configured": bool(os.getenv("ADMIN_USERNAME") and os.getenv("ADMIN_PASSWORD")),
+            "debug_mode": os.getenv("MARKET_ENGINE_DEBUG", "false").lower() == "true",
+        },
+    }
 
 
 @app.post("/api/v1/predict-best-stock")
