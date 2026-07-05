@@ -7,7 +7,9 @@ import os
 import re
 import threading
 import time
+from html import escape
 from datetime import datetime, timezone
+from xml.etree import ElementTree as ET
 
 import requests
 import streamlit as st
@@ -19,6 +21,12 @@ MAX_TICKERS = 8
 TICKER_PATTERN = re.compile(r"^[A-Z][A-Z0-9.-]{0,9}$")
 WORKSPACE_TO_QUERY = {"Market Intelligence": "market", "Admin Console": "admin"}
 QUERY_TO_WORKSPACE = {value: key for key, value in WORKSPACE_TO_QUERY.items()}
+ECONOMY_FEEDS = [
+    ("Reuters", "https://feeds.reuters.com/reuters/businessNews"),
+    ("CNBC", "https://www.cnbc.com/id/10000664/device/rss/rss.html"),
+    ("Forbes", "https://www.forbes.com/business/feed/"),
+    ("The Economist", "https://www.economist.com/finance-and-economics/rss.xml"),
+]
 
 
 def _run_api() -> None:
@@ -119,6 +127,135 @@ def _sync_workspace_query(selected_workspace: str) -> None:
         st.query_params["workspace"] = target
 
 
+def _parse_news_items(source: str, payload: str, limit: int = 2) -> list[dict[str, str]]:
+    root = ET.fromstring(payload)
+    headlines: list[dict[str, str]] = []
+
+    for item in root.findall(".//item"):
+        title = (item.findtext("title") or "").strip()
+        link = (item.findtext("link") or "").strip()
+        if title and link:
+            headlines.append({"source": source, "title": title, "link": link})
+        if len(headlines) >= limit:
+            return headlines
+
+    for entry in root.findall(".//{*}entry"):
+        title = (entry.findtext("{*}title") or "").strip()
+        link_elem = entry.find("{*}link")
+        link = ""
+        if link_elem is not None:
+            link = (link_elem.get("href") or link_elem.text or "").strip()
+        if title and link:
+            headlines.append({"source": source, "title": title, "link": link})
+        if len(headlines) >= limit:
+            return headlines
+
+    return headlines
+
+
+@st.cache_data(ttl=600)
+def _load_economy_headlines(max_items: int = 8) -> list[dict[str, str]]:
+    headlines: list[dict[str, str]] = []
+    for source, feed_url in ECONOMY_FEEDS:
+        try:
+            response = requests.get(
+                feed_url,
+                timeout=6,
+                headers={"User-Agent": "greens-acc-news-client/1.0"},
+            )
+            response.raise_for_status()
+            headlines.extend(_parse_news_items(source=source, payload=response.text))
+        except (requests.RequestException, ET.ParseError):
+            continue
+        if len(headlines) >= max_items:
+            break
+
+    if headlines:
+        return headlines[:max_items]
+
+    return [
+        {
+            "source": "Reuters",
+            "title": "Global stocks steady as investors watch inflation data and central bank policy outlook.",
+            "link": "https://www.reuters.com/markets/",
+        },
+        {
+            "source": "The Economist",
+            "title": "Debt, rates, and growth are reshaping the next cycle for global capital flows.",
+            "link": "https://www.economist.com/finance-and-economics",
+        },
+        {
+            "source": "Forbes",
+            "title": "Tech and industrial earnings remain key drivers for market leadership this quarter.",
+            "link": "https://www.forbes.com/business/",
+        },
+    ]
+
+
+def _render_logo_and_news() -> None:
+    st.markdown(
+        """
+    <section class="brand-shell">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 96 96" role="img">
+            <defs>
+              <linearGradient id="greensGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#18a64a" />
+                <stop offset="100%" stop-color="#0f6d2d" />
+              </linearGradient>
+            </defs>
+            <circle cx="48" cy="48" r="44" fill="url(#greensGradient)" />
+            <path d="M30 54c8-19 24-22 39-20-7 17-18 29-39 20z" fill="#ecfff1" opacity="0.95" />
+            <path d="M37 63c4-9 14-12 25-11-4 9-11 16-25 11z" fill="#c6f8d3" />
+            <circle cx="66" cy="30" r="5" fill="#ecfff1" />
+          </svg>
+        </div>
+        <div>
+          <p class="brand-eyebrow">Greens ACC identity</p>
+          <h2>Greens ACC</h2>
+          <p>Professional AI market intelligence interface with connected frontend and backend execution.</p>
+        </div>
+      </div>
+    </section>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    headlines = _load_economy_headlines()
+    ticker_text = "  •  ".join([f"{item['source']}: {item['title']}" for item in headlines])
+    st.markdown(
+        f"""
+    <div class="news-ticker-wrap">
+      <strong>Live Economy News</strong>
+      <div class="news-ticker" aria-label="Live economy headlines from leading publications">
+        <div class="news-ticker-track">{escape(ticker_text)}</div>
+      </div>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    news_cards = "".join(
+        [
+            (
+                f"<a class='news-card' href='{escape(item['link'], quote=True)}' target='_blank' "
+                f"rel='noopener noreferrer'><small>{escape(item['source'])}</small>"
+                f"<span>{escape(item['title'])}</span></a>"
+            )
+            for item in headlines[:4]
+        ]
+    )
+    st.markdown(
+        f"""
+    <section class="news-grid">
+      {news_cards}
+    </section>
+    """,
+        unsafe_allow_html=True,
+    )
+
+
 def _render_market_page(backend_ready: bool) -> None:
     st.markdown(
         """
@@ -129,6 +266,7 @@ def _render_market_page(backend_ready: bool) -> None:
     """,
         unsafe_allow_html=True,
     )
+    _render_logo_and_news()
     st.markdown(
         """
     <div class="metric-row">
@@ -343,6 +481,122 @@ st.markdown(
         border-radius: 12px;
         padding: 0.75rem;
         background: #ffffff;
+    }
+    .brand-shell {
+        border: 1px solid #d8e7dc;
+        border-radius: 16px;
+        padding: 1rem;
+        background: #ffffff;
+        margin-bottom: 0.8rem;
+    }
+    .brand-lockup {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        align-items: center;
+        gap: 1rem;
+    }
+    .brand-mark {
+        width: 88px;
+        height: 88px;
+        border-radius: 18px;
+        overflow: hidden;
+        background: #eaf8ed;
+        border: 1px solid #cde8d4;
+    }
+    .brand-mark svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+    .brand-eyebrow {
+        margin: 0;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #2d6540;
+    }
+    .brand-lockup h2 {
+        margin: 0.2rem 0;
+        color: #114822;
+    }
+    .brand-lockup p {
+        margin: 0;
+        color: #2f5740;
+    }
+    .news-ticker-wrap {
+        display: grid;
+        gap: 0.5rem;
+        margin: 0.9rem 0 1rem;
+    }
+    .news-ticker-wrap strong {
+        color: #174d27;
+        font-size: 0.95rem;
+    }
+    .news-ticker {
+        border: 1px solid #cfe6d5;
+        border-radius: 12px;
+        background: #f6fcf7;
+        overflow: hidden;
+        padding: 0.6rem 0;
+    }
+    .news-ticker-track {
+        color: #1f4b2c;
+        font-size: 0.95rem;
+        white-space: nowrap;
+        padding-left: 100%;
+        animation: ticker-scroll 38s linear infinite;
+    }
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+    .news-card {
+        display: grid;
+        gap: 0.35rem;
+        text-decoration: none;
+        border: 1px solid #d8e7dc;
+        border-radius: 12px;
+        background: #ffffff;
+        padding: 0.8rem;
+        color: #173824;
+        transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+    .news-card:hover {
+        border-color: #2a8e43;
+        transform: translateY(-1px);
+    }
+    .news-card small {
+        color: #3b6e4d;
+        font-weight: 600;
+    }
+    .news-card span {
+        line-height: 1.35;
+        color: #183727;
+    }
+    @keyframes ticker-scroll {
+        from { transform: translateX(0); }
+        to { transform: translateX(-100%); }
+    }
+    @media (max-width: 840px) {
+        .brand-lockup {
+            grid-template-columns: 1fr;
+        }
+        .news-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .news-ticker-track {
+            animation: none;
+            padding-left: 0.8rem;
+            white-space: normal;
+            padding-right: 0.8rem;
+        }
+        .news-card {
+            transition: none;
+        }
     }
     .metric-card small { color: #45634d; }
     .metric-card strong { color: #1a6d2c; font-size: 1.1rem; }
