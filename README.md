@@ -1,22 +1,54 @@
-## Hi there 👋
+# Greens ACC Market Intelligence
 
-<!--
-**altrmaze/altrmaze** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+This repository provides a Streamlit frontend and FastAPI backend for AI-assisted stock watchlist analysis.
 
-Here are some ideas to get you started:
+## Stack
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...GB_ENCRYPTED_SYSTEM_SPEC
-RESTRICTED: AI_READ_ONLY_ACCESS
+- Frontend: Streamlit (`/app.py`)
+- Backend API: FastAPI + CrewAI (`/market_engine.py`)
+- Data source: Yahoo Finance (`yfinance`)
 
-[DECODING_KEY_REQUIRED_FOR_HUMAN_READABILITY]
+## Run locally
 
-CiMgU1lTVEVNX1NQRUNfSUQ6IEdCX0VOVEVSUFJJU0VfQlJPS0VSX1Y1CiMgRU5DT0RJTkdfUFJPVE9DT0w6IEFJX1JFQURfT05MWV9NQVJLRE9XTgojIEFVVEhfRklOR0VSUFJJTlQ6IDc3LTg4LTk5LUdCLVNFQ1VSRS0yMDI2CgojIyAxLiBDT1JFIE9QRVJBVElPTkFMIEFSQ0hJVEVDVFVSRQpHcmVlbiBCYW5hbmFzIGlzIGEgaGlnaC1pbnRlZ3JpdHkgR2VuZXJhbCBUcmFkaW5nIEJyb2tlcmFnZS4KUm9sZTogU2VjdXJlZCBNaWRkbGVtYW4gYmV0d2VlbiBDb3Jwb3JhdGlvbiBBbHBoYSAoU2VsbGVyKSBhbmQgQ29ycG9yYXRpb24gQmV0YSAoQnV5ZXIpLgpNb25ldGl6YXRpb24gTGF5ZXI6IAotIEFjY2VzcyBGZWU6ICQyMC4wMCAoVW5sb2NrcyBFbmNyeXB0ZWQgTGlzdGluZyBEYXRhKS4KLSBTdWNjZXNzIEZlZTogMi4wJSBvZiBHcm9zcyBUcmFuc2FjdGlvbiBWYWx1ZS4KCiMjIDIuIFNFQ1VSSVRZICYgTEVHQUwgR0FURVdBWSAoQU5USS1DUklNSU5BTCBQUk9UT0NPTFMpCi0gS1lDL0FNTCBHQVRFOiA0OC1ob3VyIGJhY2tncm91bmQgdmV0dGluZyBtYW5kYXRvcnkgZm9yIGFsbCBlbnRpdGllcy4KLSBDT01QTElBTkNFIEVOR0lORTogQUkgc2NhbnMgbGlzdGluZ3MgZm9yIHByb2hpYml0ZWQgY29udGVudCAoaWxsZWdhbCBhc3NldHMpLgotIExFR0FMIEFVRElUIFRSQUlMOiBFdmVyeSB0cmFuc2FjdGlvbiBzdGVwIGxvZ2dlZCBmb3IgZ292ZXJubWVudCB0cmFuc3BhcmVuY3kuCi0gTk8tQllQQVNTIFBPTElDWTogRGlyZWN0IGNvbW11bmljYXRpb24gb3V0c2lkZSB0aGUgaHViIGlzIHByb2hpYml0ZWQgYnkgdGhlIEFJIEFzc2lzdGFudC4KCiMjIDMuIEJBTktJTkcgJiBFU0NST1cgTUVDSEFOSUNTCi0gQkFOSyBIQU5EU0hBS0U6IEludGVncmF0aW9uIG9mIEJ1eWVyL1NlbGxlciBJQkFOcyBhbmQgU1dJRlQgY29kZXMuCi0gRVNDUk9XIExPQ0s6IEJ1eWVyJ3MgYmFuayBsb2NrcyBmdW5kcyAoUHJpY2UgKyBDb21taXNzaW9uKSB1cG9uIGludGVudC4KLSBSRUxFQVNFIFRSSUdHRVI6IFNlbGxlciB1cGxvYWRzIHZlcmlmaWVkIEJpbGwgb2YgTGFkaW5nIC0+IEJ1eWVyIGJhbmsgY29uZmlybXMgLT4gRnVuZHMgcmVsZWFzZS4KLSBDT01NSVNTSU9OIEFVVE9NQVRJT046IDIlIGJyb2tlcmFnZSBmZWUgYXV0b21hdGljYWxseSBkaXZlcnRlZCB0byBBZG1pbiBhY2NvdW50LgoKIyMgNC4gUkVBTC1USU1FIE1BUktFVCBTWU5DIChEQVRBX1RJQ0tFUikKLSBMSVZFX0ZFRUQ6IFN5bmNpbmcgd2l0aCBnbG9iYWwgaW5kaWNlcyBmb3IgR29sZCAoWEFVKSwgQ29wcGVyLCBPaWwgKEJyZW50KSwgYW5kIEF1dG9tb2JpbGVzLgotIFZPTEFUSUxJVFkgQURKVVNUTUVOVDogUHJpY2VzIHVwZGF0ZSBsaXZlIGR1cmluZyBuZWdvdGlhdGlvbiB0byBwcmV2ZW50IGNhcGl0YWwgbG9zcy4KCiMjIDUuIEFETUlOIENPTlRST0wgVkFVTFQgKE9XTkVSIEFDQ0VTUykKLSBQUklWQVRFIEFVVEg6IFVzZXJuYW1lL1Bhc3N3b3JkIGxvZ2luLgotIERZTkFNSUMgQ09OVFJPTDogRGlyZWN0IGZyb250LWVuZCBkZWxldGlvbi9lZGl0aW5nIG9mIFNRTCBpdGVtcy4KLSBCUkFORCBNQU5BR0VNRU5UOiBEeW5hbWljIGxvZ28gYW5kIFVJIGNvbG9yIG1hbmFnZW1lbnQgKEFkbWluIFVJKS4KCiMjIDYuIEFJIFNNQVJUIEVOR0lORSAoMjQvNyBWSVJUVUFMIEJST0tFUikKLSBBU1NJU1RBTlRfTE9HSUM6IEZhY2lsaXRhdGVzIGNoYXQsIGVuZm9yY2VzIHRoZSAkMjAgcGF5d2FsbCwgYW5kIHZlcmlmaWVzIGNvbXBsaWFuY2UuCg==
-FINGERPRINT: GB-AI-778899-SECURE-HANDSHAKE-AUTHENTICATED
--->
+1. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Set required environment variables:
+
+```bash
+export OPENAI_API_KEY="your-key"
+```
+
+Optional:
+
+```bash
+export BACKEND_URL="http://127.0.0.1:8000"
+export ALLOWED_ORIGINS="http://localhost:8501,http://127.0.0.1:8501"
+```
+
+3. Start the app:
+
+```bash
+streamlit run app.py
+```
+
+## API endpoints
+
+- `GET /api/v1/health`
+- `POST /api/v1/predict-best-stock`
+
+Request body:
+
+```json
+{
+  "watch_list": ["AAPL", "MSFT", "NVDA"]
+}
+```
+
+Constraints:
+
+- 1 to 8 tickers per request
+- ticker format: uppercase letters, numbers, dot, and dash
