@@ -1,65 +1,46 @@
+import Anthropic from '@anthropic-ai/sdk';
 import { GoogleGenAI } from '@google/genai';
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
+import 'dotenv/config';
 
-// Initialize the Gemini Client (Make sure GEMINI_API_KEY is in your environment variables)
-const ai = new GoogleGenAI({});
+const claudeClient = new Anthropic();
+const geminiClient = new GoogleGenAI({});
 
-export async function runAgentWithSkill(skillPath: string, userPrompt: string) {
+export async function runUnifiedSkill(
+  provider: 'claude' | 'gemini',
+  skillFolderPath: string,
+  userPrompt: string
+) {
   try {
-    // 1. Read the SKILL.md instruction file from your local directory or skills.sh package
-    const skillMarkdownPath = path.join(skillPath, 'SKILL.md');
-    const skillInstructions = fs.readFileSync(skillMarkdownPath, 'utf-8');
+    const skillInstructions = fs.readFileSync(path.join(skillFolderPath, 'SKILL.md'), 'utf-8');
+    const systemInstructions = `You are an AI execution engine running a structured skill standard. Follow these rules:\n\n=== SKILL SPEC ===\n${skillInstructions}`;
 
-    // 2. Call Gemini (using gemini-2.5-flash for speed or gemini-2.5-pro for complex coding/logic)
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [
-        {
-          text: `You are an advanced agent execution engine. You must strictly follow the operational guidelines, rules, and steps outlined in this Skill specification.
-          
-          --- START SKILL SPECIFICATION ---
-          ${skillInstructions}
-          --- END SKILL SPECIFICATION ---
-          
-          User Request: ${userPrompt}`
-        }
-      ]
-    });
+    console.log(`\n🤖 Dispatching task to [${provider.toUpperCase()}]...`);
 
-    console.log('Agent Execution Output:\n', response.text);
-    return response.text;
-  } catch (error) {
-    console.error('Failed to execute skill:', error);
-  }
-}
-
-export async function runOpenAIResponses(userPrompt: string) {
-  try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + (process.env.OPENAI_API_KEY ?? '')
-      },
-      body: JSON.stringify({
-        model: 'gpt-4.1-mini',
-        input: userPrompt
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`OpenAI API request failed: ${response.status} ${response.statusText}`);
+    if (provider === 'claude') {
+      const response = await claudeClient.messages.create({
+        model: 'claude-3-5-sonnet-latest',
+        max_tokens: 4000,
+        system: systemInstructions,
+        messages: [{ role: 'user', content: userPrompt }]
+      });
+      return response.content[0].type === 'text' ? response.content[0].text : '';
     }
 
-    const data = await response.json();
-    console.log('OpenAI Responses Output:\n', data);
-    return data;
+    if (provider === 'gemini') {
+      const response = await geminiClient.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [{ text: `${systemInstructions}\n\nUser Request: ${userPrompt}` }]
+      });
+      return response.text;
+    }
   } catch (error) {
-    console.error('Failed to call OpenAI Responses API:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`❌ Error running ${provider}:`, message);
   }
 }
 
 // Example usage:
-// runAgentWithSkill('./skills/image-to-code', 'Convert my uploaded wireframe into a clean tailwind layout');
-// runOpenAIResponses('Summarize the latest frontend architecture recommendations.');
+// const output = await runUnifiedSkill('claude', './skills/image-to-code', 'Build a dashboard landing page layout');
+// console.log(output);

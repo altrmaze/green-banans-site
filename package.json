@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/altrmaze/green-banans-site#readme",
   "dependencies": {
-    "@google/genai": "^2.10.0"
+    "@anthropic-ai/sdk": "^0.110.0",
+    "@google/genai": "^2.10.0",
+    "dotenv": "^17.4.2"
   }
 }
