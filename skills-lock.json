@@ -1,11 +1,71 @@
 {
   "version": 1,
   "skills": {
+    "agent-browser": {
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "skillPath": "skills/agent-browser/SKILL.md",
+      "computedHash": "b93b77d9a63143fcefa7d371c1fceba58f1f310ef76a5f2ad3d4d2077efa8c25"
+    },
+    "ai-video-generation": {
+      "source": "runcomfy-com/skills",
+      "sourceType": "github",
+      "skillPath": "ai-video-generation/SKILL.md",
+      "computedHash": "e7a373961e0196280ecf1de3ddbfb10c5a74f3f5305cb2718284e6f06b1c7d65"
+    },
+    "design-taste-frontend": {
+      "source": "leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/taste-skill/SKILL.md",
+      "computedHash": "6d838b246d0e35d0b53f4f23f98ba7a1dd561937e64f7d0c7553b0928e376c3e"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",
       "skillPath": "skills/frontend-design/SKILL.md",
       "computedHash": "4eabc66183767153e404b39d1b839b1c37f2d82d86f0a0d7e880a579d8d62336"
+    },
+    "github-actions-docs": {
+      "source": "xixu-me/skills",
+      "sourceType": "github",
+      "skillPath": "skills/github-actions-docs/SKILL.md",
+      "computedHash": "e9ac24e79715ef3060bd4ae376052f8d863b830604e69cb513b39764bf47ee53"
+    },
+    "gpt-taste": {
+      "source": "leonxlnx/taste-skill",
+      "sourceType": "github",
+      "skillPath": "skills/gpt-tasteskill/SKILL.md",
+      "computedHash": "cc8f0c601d8240a124e1d11634351a2be7b8a72fd807c75e5b6bf7afcd5ddee0"
+    },
+    "improve-codebase-architecture": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/improve-codebase-architecture/SKILL.md",
+      "computedHash": "8bf292143ca93b00276a0de0fc5f84f2381f4690c5b0d32e99fa283a072f392f"
+    },
+    "remotion-render": {
+      "source": "halt-catch-fire/skills",
+      "sourceType": "github",
+      "skillPath": "tools/video/remotion-render/SKILL.md",
+      "computedHash": "5ad33a6307b48a8e756be722ea26e39467cd1713f87fc5a8eff5480ac873eeaf"
+    },
+    "supabase-postgres-best-practices": {
+      "source": "supabase/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/supabase-postgres-best-practices/SKILL.md",
+      "computedHash": "0d2c4857a7d6fdcd3fbc46e458fa4c497f029cab89a01548b3defce203003932"
+    },
+    "to-issues": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/engineering/to-issues/SKILL.md",
+      "computedHash": "4e2a11d35f018490d42a79234432f779d7131b9920373ef24cfbc68229bfef6c"
+    },
+    "web-design-guidelines": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/web-design-guidelines/SKILL.md",
+      "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
     }
   }
 }
